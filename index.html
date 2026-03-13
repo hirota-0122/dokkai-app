@@ -623,34 +623,6 @@
     .point-list li.bad  { background: rgba(255,54,0,.08); color: #a62700; }
     .point-list li .icon { flex-shrink: 0; font-weight: 800; }
 
-    .rationale-list {
-      list-style: none;
-      margin-top: 10px;
-    }
-
-    .rationale-item {
-      background: #fbfefb;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 10px;
-    }
-
-    .rationale-point {
-      font-weight: 800;
-      font-size: 13px;
-      color: var(--black);
-      margin-bottom: 4px;
-    }
-
-    .rationale-quote,
-    .rationale-reason {
-      font-size: 13px;
-      line-height: 1.7;
-      color: #374151;
-      white-space: pre-wrap;
-    }
-
     .char-box {
       display: inline-flex;
       align-items: center;
@@ -736,7 +708,6 @@
 
       .feedback-section,
       .feedback-text,
-      .rationale-item,
       .point-list li {
         break-inside: avoid;
         page-break-inside: avoid;
@@ -749,8 +720,7 @@
 
       .feedback-text,
       .question-box,
-      .summary-task-box,
-      .rationale-item {
+      .summary-task-box {
         border-color: #000 !important;
         background: #fff !important;
       }
@@ -992,11 +962,6 @@
         <div class="feedback-text" id="res-model"></div>
       </div>
 
-      <div class="feedback-section">
-        <div class="feedback-heading">模範要約の根拠</div>
-        <ul class="rationale-list" id="res-rationale"></ul>
-      </div>
-
       <hr class="divider" />
 
       <div class="btn-row">
@@ -1096,8 +1061,13 @@
   }
 
   function decideMaxCharsByModelLength(len) {
-    if (!Number.isFinite(Number(len)) || Number(len) <= 0) return 60;
-    return Math.ceil(Number(len) / 10) * 10;
+    const n = Number(len);
+    if (!Number.isFinite(n) || n <= 0) return 60;
+    if (n <= 40) return 40;
+    if (n <= 50) return 50;
+    if (n <= 60) return 60;
+    if (n <= 70) return 70;
+    return 79;
   }
 
   async function generateQuestion() {
@@ -1116,18 +1086,19 @@
     document.getElementById('gen-btn').disabled = true;
 
     const spec = getLengthSpec(selectedDiff);
-    const prompt = buildGeneratePrompt(theme, selectedDiff, spec, extra);
 
     try {
       let json = null;
       let lastError = '';
 
-      for (let attempt = 1; attempt <= 3; attempt++) {
+      for (let attempt = 1; attempt <= 5; attempt++) {
+        const prompt = buildGeneratePrompt(theme, selectedDiff, spec, extra, attempt);
         const resText = await callAPI(prompt);
         const candidate = extractJSON(resText);
+
         try {
-          json = normalizeGeneratedQuestion(candidate, spec);
-          validateGeneratedQuestion(json, spec);
+          json = normalizeGeneratedQuestion(candidate);
+          validateGeneratedQuestion(json);
           break;
         } catch (err) {
           lastError = `生成${attempt}回目: ${err.message}`;
@@ -1148,7 +1119,7 @@
       renderModelCharBox();
       document.getElementById('question-result').style.display = 'block';
 
-      showInfo('gen-info', '問題を生成しました。模範要約の字数に応じて設問上限も自動調整しています。');
+      showInfo('gen-info', '問題を生成しました。模範要約は79字以内に制限しています。');
     } catch (e) {
       showError('gen-error', '問題の生成に失敗しました。もう一度お試しください。\n' + e.message);
     } finally {
@@ -1157,7 +1128,15 @@
     }
   }
 
-  function buildGeneratePrompt(theme, level, spec, extra) {
+  function buildGeneratePrompt(theme, level, spec, extra, attempt = 1) {
+    const strictNote = attempt > 1
+      ? `
+- 前回は条件違反がありました。今回は特に model_summary を短くしてください。
+- model_summary は絶対に79字以内。
+- 80字以上は不可。
+- 冗長な言い換えを避け、1文または2文で簡潔にまとめる。`
+      : '';
+
     return `あなたは国語の要約問題作成者です。次の条件で論説文1本と要約問題を作成し、出力はJSONのみとしてください。説明文、前置き、Markdownは禁止です。
 
 【条件】
@@ -1181,15 +1160,14 @@
 - 4択問題は絶対に作らない。
 - model_summary は自然な日本語で書く。
 - model_summary には具体例・たとえ話・細かなエピソードを入れず、本文の要旨だけを書く。
-- model_summary は短すぎず長すぎず、要旨がきちんと入る長さにする。
+- model_summary は日本語79字以内とする。
+- model_summary は短すぎず長すぎず、79字以内で要旨がきちんと入る長さにする。
 - summary_task には最初は具体的な字数を書かなくてよい。こちらで後から調整する。
 - main_point は本文全体の中心主張を一文で簡潔に書く。
 - required_points は要約で最低限触れてほしい要点を2～4個に絞る。
-- rubric には採点観点を4～6個入れる。
+- rubric には採点観点を3～5個入れる。
 - rubric には必ず「具体例に寄りすぎず、本文の要旨をまとめているか」を含める。
-- summary_rationale は3～4個程度にする。
-- quote には本文中の根拠表現を入れるが、長すぎる引用は避ける。
-- JSONの各キーは必ず埋める。
+- JSONの各キーは必ず埋める。${strictNote}
 
 ${extra ? '【追加指示】\n- ' + extra : ''}
 
@@ -1200,16 +1178,11 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
   "main_point":"本文全体の中心主張",
   "required_points":["要点1","要点2","要点3"],
   "model_summary":"模範要約",
-  "rubric":["観点1","観点2","観点3","観点4"],
-  "summary_rationale":[
-    {"point":"要点1","quote":"引用1","reason":"説明1"},
-    {"point":"要点2","quote":"引用2","reason":"説明2"},
-    {"point":"要点3","quote":"引用3","reason":"説明3"}
-  ]
+  "rubric":["観点1","観点2","観点3","観点4"]
 }`;
   }
 
-  function normalizeGeneratedQuestion(json, spec) {
+  function normalizeGeneratedQuestion(json) {
     const out = { ...json };
 
     if (!Array.isArray(out.required_points)) out.required_points = [];
@@ -1221,22 +1194,12 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
     if (!Array.isArray(out.rubric)) out.rubric = [];
     out.rubric = out.rubric
       .map(v => String(v || '').trim())
-      .filter(Boolean);
+      .filter(Boolean)
+      .slice(0, 5);
 
     if (!out.rubric.some(v => v.includes('具体例') || v.includes('要旨'))) {
       out.rubric.push('具体例に寄りすぎず、本文の要旨をまとめているか');
     }
-
-    if (!Array.isArray(out.summary_rationale)) out.summary_rationale = [];
-    out.summary_rationale = out.summary_rationale
-      .filter(Boolean)
-      .map(item => ({
-        point: String(item.point || '').trim(),
-        quote: String(item.quote || '').trim(),
-        reason: String(item.reason || '').trim()
-      }))
-      .filter(item => item.point || item.quote || item.reason)
-      .slice(0, 4);
 
     out.passage = normalizeTextBlock(out.passage);
     out.summary_task = String(out.summary_task || '').trim();
@@ -1251,7 +1214,7 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
     return out;
   }
 
-  function validateGeneratedQuestion(json, spec) {
+  function validateGeneratedQuestion(json) {
     if (!json.passage || !json.summary_task || !json.model_summary || !json.main_point) {
       throw new Error('問題データが不足しています。');
     }
@@ -1260,11 +1223,12 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
       throw new Error('required_points が不足しています。');
     }
 
-    if (!json.summary_rationale || json.summary_rationale.length < 2) {
-      throw new Error('summary_rationale が不足しています。');
+    const modelLen = countCharsJP(json.model_summary);
+
+    if (modelLen > 79) {
+      throw new Error(`模範要約が長すぎます（${modelLen}字）。79字以内にしてください。`);
     }
 
-    const modelLen = countCharsJP(json.model_summary);
     if (modelLen > json.max_chars) {
       throw new Error(`模範要約の字数が設問上限を超えています（${modelLen}字 / ${json.max_chars}字以内）。`);
     }
@@ -1296,9 +1260,9 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
     const len = currentQuestion.model_chars ?? countCharsJP(currentQuestion.model_summary || '');
     const max = currentQuestion.max_chars ?? 0;
     const el = document.getElementById('model-char-box');
-    const ok = len <= max;
+    const ok = len <= max && len <= 79;
     el.className = 'char-box ' + (ok ? 'char-ok' : 'char-ng');
-    el.textContent = `模範要約：${len}字 / 設問 ${max}字以内`;
+    el.textContent = `模範要約：${len}字 / 上限 ${max}字以内（最大79字）`;
   }
 
   function goToAnswer() {
@@ -1434,9 +1398,10 @@ ${answerContent}
 - 具体例だけを拾って中心主張が弱い場合は減点する。
 - 感想や自分の意見を書いている場合は減点する。
 - 日本語として簡潔で自然かを見る。
-- 字数条件に不適合なら、その事実を improve_points と comment に明記する。
+- 字数条件に不適合なら、その事実を improve_point と comment に明記する。
+- improve_point は1つだけにする。
+- good_points は1〜2個までにする。
 - model_answer_hint は currentQuestion.model_summary をそのまま返す。
-- summary_rationale は currentQuestion.summary_rationale をそのまま返す。
 - 採点では必ず「具体例に寄りすぎず、本文の要旨をまとめているか」を見る。
 
 【出力JSON】
@@ -1445,9 +1410,8 @@ ${answerContent}
   "grade": "A",
   "comment": "総合コメント",
   "good_points": ["よかった点1","よかった点2"],
-  "improve_points": ["改善点1","改善点2","改善点3"],
+  "improve_point": "改善点1つだけ",
   "model_answer_hint": "${escapeForJson(currentQuestion.model_summary)}",
-  "summary_rationale": ${JSON.stringify(currentQuestion.summary_rationale || [], null, 2)},
   "char_count": ${answerLen},
   "char_ok": ${lengthStatus.ok ? 'true' : 'false'}
 }
@@ -1480,29 +1444,19 @@ ${answerContent}
 
     document.getElementById('res-comment').textContent = json.comment || '';
 
-    const goodPoints = Array.isArray(json.good_points) ? json.good_points : [];
-    const improvePoints = Array.isArray(json.improve_points) ? json.improve_points : [];
-    const rationale = Array.isArray(json.summary_rationale)
-      ? json.summary_rationale
-      : (Array.isArray(currentQuestion.summary_rationale) ? currentQuestion.summary_rationale : []);
+    const goodPointsRaw = Array.isArray(json.good_points) ? json.good_points : [];
+    const goodPoints = goodPointsRaw.slice(0, 2);
+    const improvePoint = String(json.improve_point || '').trim();
 
     document.getElementById('res-good').innerHTML = goodPoints.map(p =>
       `<li class="good"><span class="icon">✓</span>${escapeHtml(p)}</li>`
     ).join('');
 
-    document.getElementById('res-bad').innerHTML = improvePoints.map(p =>
-      `<li class="bad"><span class="icon">△</span>${escapeHtml(p)}</li>`
-    ).join('');
+    document.getElementById('res-bad').innerHTML = improvePoint
+      ? `<li class="bad"><span class="icon">△</span>${escapeHtml(improvePoint)}</li>`
+      : '';
 
     document.getElementById('res-model').textContent = json.model_answer_hint || currentQuestion.model_summary || '';
-
-    document.getElementById('res-rationale').innerHTML = rationale.map((item, idx) => `
-      <li class="rationale-item">
-        <div class="rationale-point">要点${idx + 1}：${escapeHtml(item.point || '')}</div>
-        <div class="rationale-quote">引用：${escapeHtml(item.quote || '')}</div>
-        <div class="rationale-reason">説明：${escapeHtml(item.reason || '')}</div>
-      </li>
-    `).join('');
 
     const charCount = Number.isFinite(Number(json.char_count)) ? Number(json.char_count) : 0;
     const charOk = !!json.char_ok;
@@ -1525,7 +1479,7 @@ ${answerContent}
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 2800,
+        max_tokens: 1800,
         messages: [{
           role: 'user',
           content: prompt
@@ -1566,7 +1520,7 @@ ${answerContent}
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 2800,
+        max_tokens: 1800,
         messages: [{
           role: 'user',
           content: [
@@ -1779,7 +1733,6 @@ ${answerContent}
 
   function parseLengthFromTask(task) {
     const text = String(task || '');
-
     const maxOnly = text.match(/(\d+)\s*字以内/);
     if (maxOnly) {
       return {
@@ -1787,7 +1740,6 @@ ${answerContent}
         max: Number(maxOnly[1])
       };
     }
-
     return { min: null, max: null };
   }
 
