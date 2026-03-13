@@ -965,7 +965,9 @@
       <hr class="divider" />
 
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="restart()">✦ 新しい問題を作る</button>
+        <button class="btn btn-primary" onclick="scoreAnotherStudent()">同じ問題でもう1人採点する</button>
+        <button class="btn btn-outline" onclick="backToAnswer()">採点前の画面に戻る</button>
+        <button class="btn btn-outline" onclick="restart()">✦ 新しい問題を作る</button>
         <button class="btn btn-outline" onclick="printResult()">🖨️ 印刷する</button>
       </div>
     </div>
@@ -1060,14 +1062,16 @@
     }
   }
 
-  function decideMaxCharsByModelLength(len) {
-    const n = Number(len);
-    if (!Number.isFinite(n) || n <= 0) return 60;
-    if (n <= 40) return 40;
-    if (n <= 50) return 50;
-    if (n <= 60) return 60;
-    if (n <= 70) return 70;
-    return 79;
+  function decideMaxCharsByLevel(level) {
+    if (level === '小6・中1') return 30;
+    if (level === '高校入試') return 50;
+    return 70;
+  }
+
+  function getModelSummaryLimitText(level) {
+    if (level === '小6・中1') return 'model_summary は日本語30字程度、30字以内を目安に簡潔にまとめる。';
+    if (level === '高校入試') return 'model_summary は日本語50字程度、50字以内を目安に簡潔にまとめる。';
+    return 'model_summary は日本語70字以内でまとめる。';
   }
 
   async function generateQuestion() {
@@ -1097,8 +1101,8 @@
         const candidate = extractJSON(resText);
 
         try {
-          json = normalizeGeneratedQuestion(candidate);
-          validateGeneratedQuestion(json);
+          json = normalizeGeneratedQuestion(candidate, selectedDiff);
+          validateGeneratedQuestion(json, selectedDiff);
           break;
         } catch (err) {
           lastError = `生成${attempt}回目: ${err.message}`;
@@ -1119,7 +1123,7 @@
       renderModelCharBox();
       document.getElementById('question-result').style.display = 'block';
 
-      showInfo('gen-info', '問題を生成しました。模範要約は79字以内に制限しています。');
+      showInfo('gen-info', '問題を生成しました。難易度ごとの字数制限で模範要約と設問を調整しています。');
     } catch (e) {
       showError('gen-error', '問題の生成に失敗しました。もう一度お試しください。\n' + e.message);
     } finally {
@@ -1131,10 +1135,8 @@
   function buildGeneratePrompt(theme, level, spec, extra, attempt = 1) {
     const strictNote = attempt > 1
       ? `
-- 前回は条件違反がありました。今回は特に model_summary を短くしてください。
-- model_summary は絶対に79字以内。
-- 80字以上は不可。
-- 冗長な言い換えを避け、1文または2文で簡潔にまとめる。`
+- 前回は条件違反がありました。今回は特に model_summary の字数を厳守する。
+- 指定された字数上限を1字でも超えてはいけない。`
       : '';
 
     return `あなたは国語の要約問題作成者です。次の条件で論説文1本と要約問題を作成し、出力はJSONのみとしてください。説明文、前置き、Markdownは禁止です。
@@ -1152,16 +1154,10 @@
 - 会話文は避ける。
 - 抽象論だけで終わらず、必要に応じて日常・学校・社会の具体例を0～2個入れる。
 - ${spec.levelSpec}
-- 構成は次のいずれかを自然に用いること：
-  1. 問題提起→理由→具体例→結論
-  2. 具体例→問題→一般論→結論
-  3. 一般論→反対意見→反論→結論
-  4. 身近な場面→抽象化→対比→結論
 - 4択問題は絶対に作らない。
 - model_summary は自然な日本語で書く。
 - model_summary には具体例・たとえ話・細かなエピソードを入れず、本文の要旨だけを書く。
-- model_summary は日本語79字以内とする。
-- model_summary は短すぎず長すぎず、79字以内で要旨がきちんと入る長さにする。
+- ${getModelSummaryLimitText(level)}
 - summary_task には最初は具体的な字数を書かなくてよい。こちらで後から調整する。
 - main_point は本文全体の中心主張を一文で簡潔に書く。
 - required_points は要約で最低限触れてほしい要点を2～4個に絞る。
@@ -1182,7 +1178,7 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
 }`;
   }
 
-  function normalizeGeneratedQuestion(json) {
+  function normalizeGeneratedQuestion(json, level) {
     const out = { ...json };
 
     if (!Array.isArray(out.required_points)) out.required_points = [];
@@ -1208,13 +1204,13 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
 
     const modelLen = countCharsJP(out.model_summary);
     out.model_chars = modelLen;
-    out.max_chars = decideMaxCharsByModelLength(modelLen);
+    out.max_chars = decideMaxCharsByLevel(level);
     out.summary_task = `次の文章を${out.max_chars}字以内で要約しなさい。`;
 
     return out;
   }
 
-  function validateGeneratedQuestion(json) {
+  function validateGeneratedQuestion(json, level) {
     if (!json.passage || !json.summary_task || !json.model_summary || !json.main_point) {
       throw new Error('問題データが不足しています。');
     }
@@ -1224,18 +1220,15 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
     }
 
     const modelLen = countCharsJP(json.model_summary);
+    const max = decideMaxCharsByLevel(level);
 
-    if (modelLen > 79) {
-      throw new Error(`模範要約が長すぎます（${modelLen}字）。79字以内にしてください。`);
-    }
-
-    if (modelLen > json.max_chars) {
-      throw new Error(`模範要約の字数が設問上限を超えています（${modelLen}字 / ${json.max_chars}字以内）。`);
+    if (modelLen > max) {
+      throw new Error(`模範要約が長すぎます（${modelLen}字）。${max}字以内にしてください。`);
     }
 
     const parsed = parseLengthFromTask(json.summary_task);
-    if (parsed.max !== null && parsed.max !== json.max_chars) {
-      throw new Error(`設問の字数条件と max_chars が一致しません（設問 ${parsed.max} / max_chars ${json.max_chars}）。`);
+    if (parsed.max !== null && parsed.max !== max) {
+      throw new Error(`設問の字数条件が一致しません（設問 ${parsed.max} / 想定 ${max}）。`);
     }
 
     if (containsExampleLikeContent(json.model_summary)) {
@@ -1260,9 +1253,9 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
     const len = currentQuestion.model_chars ?? countCharsJP(currentQuestion.model_summary || '');
     const max = currentQuestion.max_chars ?? 0;
     const el = document.getElementById('model-char-box');
-    const ok = len <= max && len <= 79;
+    const ok = len <= max;
     el.className = 'char-box ' + (ok ? 'char-ok' : 'char-ng');
-    el.textContent = `模範要約：${len}字 / 上限 ${max}字以内（最大79字）`;
+    el.textContent = `模範要約：${len}字 / 上限 ${max}字以内`;
   }
 
   function goToAnswer() {
@@ -1278,6 +1271,33 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
 
   function backToGen() {
     showSection(1);
+  }
+
+  function backToAnswer() {
+    showSection(2);
+  }
+
+  function scoreAnotherStudent() {
+    document.getElementById('answer-text').value = '';
+    document.getElementById('answer-img').value = '';
+    document.getElementById('ocr-text').value = '';
+    document.getElementById('preview-img').style.display = 'none';
+    document.getElementById('preview-img').src = '';
+    selectedImageFile = null;
+    currentTab = 'text';
+
+    document.querySelectorAll('.tab').forEach((tab, idx) => {
+      tab.classList.toggle('active', idx === 0);
+    });
+    document.querySelectorAll('.tab-panel').forEach((panel, idx) => {
+      panel.classList.toggle('active', idx === 0);
+    });
+
+    clearError('score-error');
+    hideInfo('score-info');
+    updateTextCharStatus();
+    updateOcrCharStatus();
+    showSection(2);
   }
 
   async function extractTextFromImage() {
@@ -1401,7 +1421,7 @@ ${answerContent}
 - 字数条件に不適合なら、その事実を improve_point と comment に明記する。
 - improve_point は1つだけにする。
 - good_points は1〜2個までにする。
-- model_answer_hint は currentQuestion.model_summary をそのまま返す。
+- model_answer_hint は入力の模範要約をそのまま返す。
 - 採点では必ず「具体例に寄りすぎず、本文の要旨をまとめているか」を見る。
 
 【出力JSON】
