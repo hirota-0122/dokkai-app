@@ -372,11 +372,6 @@
       color: #6f6900;
     }
 
-    .tag-summary {
-      background: rgba(255,54,0,.1);
-      color: var(--red-d);
-    }
-
     .summary-task-box {
       background: rgba(254,237,1,.12);
       border: 1px solid rgba(215,198,0,.35);
@@ -1101,12 +1096,8 @@
   }
 
   function decideMaxCharsByModelLength(len) {
-    if (len <= 40) return 40;
-    if (len <= 50) return 50;
-    if (len <= 60) return 60;
-    if (len <= 70) return 70;
-    if (len <= 80) return 80;
-    return 90;
+    if (!Number.isFinite(Number(len)) || Number(len) <= 0) return 60;
+    return Math.ceil(Number(len) / 10) * 10;
   }
 
   async function generateQuestion() {
@@ -1150,15 +1141,14 @@
       currentQuestion = json;
       currentMeta = {
         theme,
-        diff: selectedDiff,
-        qtype: '要約問題'
+        diff: selectedDiff
       };
 
       renderQuestion('q-meta', 'q-text', 'summary-task-box', json, currentMeta);
       renderModelCharBox();
       document.getElementById('question-result').style.display = 'block';
 
-      showInfo('gen-info', '問題を生成しました。模範要約の字数と内容の基本条件も確認済みです。');
+      showInfo('gen-info', '問題を生成しました。模範要約の字数に応じて設問上限も自動調整しています。');
     } catch (e) {
       showError('gen-error', '問題の生成に失敗しました。もう一度お試しください。\n' + e.message);
     } finally {
@@ -1168,7 +1158,7 @@
   }
 
   function buildGeneratePrompt(theme, level, spec, extra) {
-    return `あなたは国語の要約問題作成者です。次の条件で論説文1本と要約問題のみを作成し、出力はJSONのみとしてください。説明文、前置き、Markdownは禁止です。
+    return `あなたは国語の要約問題作成者です。次の条件で論説文1本と要約問題を作成し、出力はJSONのみとしてください。説明文、前置き、Markdownは禁止です。
 
 【条件】
 - テーマ：${theme}
@@ -1188,7 +1178,6 @@
   2. 具体例→問題→一般論→結論
   3. 一般論→反対意見→反論→結論
   4. 身近な場面→抽象化→対比→結論
-- 要約問題のみを付ける。
 - 4択問題は絶対に作らない。
 - model_summary は自然な日本語で書く。
 - model_summary には具体例・たとえ話・細かなエピソードを入れず、本文の要旨だけを書く。
@@ -1297,8 +1286,7 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
   function renderQuestion(metaId, textId, taskId, json, meta) {
     document.getElementById(metaId).innerHTML =
       `<span class="tag tag-theme">${escapeHtml(meta.theme)}</span>
-       <span class="tag tag-diff">${escapeHtml(meta.diff)}</span>
-       <span class="tag tag-summary">${escapeHtml(meta.qtype)}</span>`;
+       <span class="tag tag-diff">${escapeHtml(meta.diff)}</span>`;
 
     document.getElementById(textId).textContent = json.passage;
     document.getElementById(taskId).textContent = '【要約】\n' + json.summary_task;
@@ -1419,11 +1407,6 @@ ${currentQuestion.passage}
 【要約問題】
 ${currentQuestion.summary_task}
 
-【字数条件】
-- 上限字数: ${currentQuestion.max_chars}
-- 生徒答案字数: ${answerLen}
-- 字数条件判定: ${lengthStatus.ok ? '適合' : '不適合'}
-
 【本文全体の中心主張】
 ${currentQuestion.main_point}
 
@@ -1433,8 +1416,10 @@ ${(currentQuestion.required_points || []).map((p, i) => `${i + 1}. ${p}`).join('
 【模範要約】
 ${currentQuestion.model_summary}
 
-【採点観点】
-${Array.isArray(currentQuestion.rubric) ? currentQuestion.rubric.join(' / ') : '本文全体の要旨把握 / 主張と理由 / 具体例に寄りすぎない / 感想なし'}
+【生徒答案の字数】
+- 上限字数: ${currentQuestion.max_chars}
+- 生徒答案字数: ${answerLen}
+- 字数条件判定: ${lengthStatus.ok ? '適合' : '不適合'}
 
 ${rubricText ? '【追加採点基準】\n' + rubricText + '\n' : ''}
 
@@ -1452,6 +1437,7 @@ ${answerContent}
 - 字数条件に不適合なら、その事実を improve_points と comment に明記する。
 - model_answer_hint は currentQuestion.model_summary をそのまま返す。
 - summary_rationale は currentQuestion.summary_rationale をそのまま返す。
+- 採点では必ず「具体例に寄りすぎず、本文の要旨をまとめているか」を見る。
 
 【出力JSON】
 {
@@ -1538,7 +1524,7 @@ ${answerContent}
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-opus-4-1',
+        model: 'claude-sonnet-4-6',
         max_tokens: 2800,
         messages: [{
           role: 'user',
@@ -1579,7 +1565,7 @@ ${answerContent}
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-opus-4-1',
+        model: 'claude-sonnet-4-6',
         max_tokens: 2800,
         messages: [{
           role: 'user',
@@ -1813,14 +1799,6 @@ ${answerContent}
       '通信ケーブル', 'スマホ', 'SNS', 'ゲームボーイ'
     ];
     return patterns.some(p => t.includes(p));
-  }
-
-  function evaluateLength(len, max) {
-    return {
-      ok: len <= max,
-      len,
-      max
-    };
   }
 
   function updateTextCharStatus() {
