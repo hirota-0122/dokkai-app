@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>読解採点アプリ｜Ciel Soir</title>
+  <title>要約採点アプリ｜Ciel Soir</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -14,11 +14,10 @@
       --cream:  #faf8f3;
       --white:  #ffffff;
       --gray:   #6b7280;
-      --gray-l: #f3f4f6;
       --border: #e2d9c8;
       --shadow: 0 4px 24px rgba(26,35,64,.10);
       --radius: 12px;
-      --font-jp: 'Hiragino Mincho ProN', 'Yu Mincho', 'Georgia', serif;
+      --font-jp: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
       --font-en: 'Georgia', serif;
     }
 
@@ -54,7 +53,9 @@
     }
 
     .logo-text {
-      display: flex; flex-direction: column; line-height: 1.2;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
     }
 
     .logo-text .en {
@@ -66,7 +67,7 @@
     }
 
     .logo-text .jp {
-      color: rgba(255,255,255,.6);
+      color: rgba(255,255,255,.65);
       font-size: 10px;
       letter-spacing: 2px;
     }
@@ -83,7 +84,7 @@
     }
 
     main {
-      max-width: 860px;
+      max-width: 920px;
       margin: 0 auto;
       padding: 36px 20px 60px;
     }
@@ -139,7 +140,7 @@
       color: var(--white);
     }
 
-    .step.active .step-label { color: var(--navy); font-weight: bold; }
+    .step.active .step-label { color: var(--navy); font-weight: 700; }
 
     .step.done .step-num {
       background: var(--gold);
@@ -160,7 +161,7 @@
 
     .card-title {
       font-size: 15px;
-      font-weight: bold;
+      font-weight: 700;
       color: var(--navy);
       letter-spacing: 1px;
       margin-bottom: 20px;
@@ -195,7 +196,7 @@
       color: var(--navy);
       background: var(--cream);
       outline: none;
-      transition: border-color .2s;
+      transition: border-color .2s, background .2s;
     }
 
     select:focus, textarea:focus, input[type="text"]:focus {
@@ -203,7 +204,11 @@
       background: var(--white);
     }
 
-    textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.8;
+    }
 
     .form-row {
       display: grid;
@@ -223,7 +228,7 @@
       border-radius: 8px;
       font-family: var(--font-jp);
       font-size: 14px;
-      font-weight: bold;
+      font-weight: 700;
       cursor: pointer;
       border: none;
       transition: all .2s;
@@ -235,14 +240,22 @@
       color: var(--white);
     }
 
-    .btn-primary:hover { background: #263357; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,35,64,.3); }
+    .btn-primary:hover {
+      background: #263357;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(26,35,64,.3);
+    }
 
     .btn-gold {
       background: var(--gold);
       color: var(--white);
     }
 
-    .btn-gold:hover { background: #b8973e; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,168,76,.4); }
+    .btn-gold:hover {
+      background: #b8973e;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(201,168,76,.4);
+    }
 
     .btn-outline {
       background: transparent;
@@ -253,7 +266,10 @@
     .btn-outline:hover { border-color: var(--navy); }
 
     .btn:disabled {
-      opacity: .5; cursor: not-allowed; transform: none !important; box-shadow: none !important;
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
     }
 
     .btn-row {
@@ -265,7 +281,7 @@
 
     .difficulty-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
       margin-bottom: 16px;
     }
@@ -273,7 +289,7 @@
     .diff-btn {
       border: 2px solid var(--border);
       border-radius: 8px;
-      padding: 10px 6px;
+      padding: 12px 8px;
       text-align: center;
       cursor: pointer;
       background: var(--cream);
@@ -287,9 +303,9 @@
       background: rgba(201,168,76,.08);
     }
 
-    .diff-btn .diff-icon { font-size: 18px; margin-bottom: 4px; }
-    .diff-btn .diff-name { font-size: 11px; font-weight: bold; color: var(--navy); }
-    .diff-btn .diff-grade { font-size: 10px; color: var(--gray); }
+    .diff-btn .diff-icon { font-size: 18px; margin-bottom: 5px; }
+    .diff-btn .diff-name { font-size: 12px; font-weight: 700; color: var(--navy); }
+    .diff-btn .diff-grade { font-size: 10px; color: var(--gray); margin-top: 2px; }
 
     .question-box {
       background: var(--cream);
@@ -326,6 +342,22 @@
       color: #8a6d2a;
     }
 
+    .tag-summary {
+      background: rgba(16,185,129,.10);
+      color: #065f46;
+    }
+
+    .summary-task-box {
+      background: rgba(201,168,76,.08);
+      border: 1px solid rgba(201,168,76,.35);
+      border-radius: 8px;
+      padding: 14px 16px;
+      line-height: 1.8;
+      font-size: 14px;
+      margin-bottom: 14px;
+      white-space: pre-wrap;
+    }
+
     .upload-area {
       border: 2px dashed var(--border);
       border-radius: 8px;
@@ -342,8 +374,12 @@
     }
 
     .upload-area input[type="file"] {
-      position: absolute; inset: 0;
-      opacity: 0; cursor: pointer; width: 100%; height: 100%;
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
     }
 
     .upload-icon { font-size: 36px; margin-bottom: 8px; }
@@ -379,112 +415,11 @@
     .tab.active {
       color: var(--navy);
       border-bottom-color: var(--gold);
-      font-weight: bold;
+      font-weight: 700;
     }
 
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
-
-    .score-hero {
-      text-align: center;
-      padding: 24px 0 16px;
-    }
-
-    .score-ring {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100px; height: 100px;
-      border-radius: 50%;
-      border: 5px solid var(--gold);
-      flex-direction: column;
-      margin-bottom: 12px;
-    }
-
-    .score-num {
-      font-size: 32px;
-      font-weight: bold;
-      color: var(--navy);
-      font-family: var(--font-en);
-      line-height: 1;
-    }
-
-    .score-denom {
-      font-size: 13px;
-      color: var(--gray);
-    }
-
-    .score-label {
-      font-size: 13px;
-      color: var(--gray);
-      letter-spacing: 2px;
-    }
-
-    .grade-badge {
-      display: inline-block;
-      font-size: 20px;
-      font-weight: bold;
-      padding: 6px 20px;
-      border-radius: 24px;
-      margin-top: 8px;
-      font-family: var(--font-en);
-      letter-spacing: 2px;
-    }
-
-    .grade-S { background: rgba(201,168,76,.2); color: #8a6d2a; }
-    .grade-A { background: rgba(26,35,64,.1); color: var(--navy); }
-    .grade-B { background: rgba(107,114,128,.1); color: #374151; }
-    .grade-C { background: rgba(249,115,22,.1); color: #c2410c; }
-    .grade-D { background: rgba(239,68,68,.1); color: #b91c1c; }
-
-    .feedback-section { margin-top: 20px; }
-    .feedback-heading {
-      font-size: 12px;
-      letter-spacing: 2px;
-      color: var(--gold);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .feedback-heading::before {
-      content: '';
-      display: block;
-      width: 16px; height: 1px;
-      background: var(--gold);
-    }
-
-    .feedback-text {
-      font-size: 14px;
-      line-height: 1.9;
-      color: var(--navy);
-      background: var(--cream);
-      border-radius: 8px;
-      padding: 16px;
-      border-left: 3px solid var(--gold);
-      white-space: pre-wrap;
-    }
-
-    .point-list {
-      list-style: none;
-      margin-top: 12px;
-    }
-
-    .point-list li {
-      font-size: 13px;
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      line-height: 1.6;
-    }
-
-    .point-list li.good { background: rgba(16,185,129,.08); color: #065f46; }
-    .point-list li.bad  { background: rgba(239,68,68,.08);  color: #991b1b; }
-    .point-list li .icon { flex-shrink: 0; }
 
     .loading {
       display: none;
@@ -543,10 +478,141 @@
       letter-spacing: .5px;
     }
 
-    @media (max-width: 600px) {
+    .score-hero {
+      text-align: center;
+      padding: 24px 0 16px;
+    }
+
+    .score-ring {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 108px;
+      height: 108px;
+      border-radius: 50%;
+      border: 5px solid var(--gold);
+      flex-direction: column;
+      margin-bottom: 12px;
+    }
+
+    .score-num {
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--navy);
+      font-family: var(--font-en);
+      line-height: 1;
+    }
+
+    .score-denom {
+      font-size: 13px;
+      color: var(--gray);
+    }
+
+    .score-label {
+      font-size: 13px;
+      color: var(--gray);
+      letter-spacing: 2px;
+    }
+
+    .grade-badge {
+      display: inline-block;
+      font-size: 20px;
+      font-weight: 700;
+      padding: 6px 20px;
+      border-radius: 24px;
+      margin-top: 8px;
+      font-family: var(--font-en);
+      letter-spacing: 2px;
+    }
+
+    .grade-S { background: rgba(201,168,76,.2); color: #8a6d2a; }
+    .grade-A { background: rgba(26,35,64,.1); color: var(--navy); }
+    .grade-B { background: rgba(107,114,128,.1); color: #374151; }
+    .grade-C { background: rgba(249,115,22,.1); color: #c2410c; }
+    .grade-D { background: rgba(239,68,68,.1); color: #b91c1c; }
+
+    .feedback-section { margin-top: 20px; }
+
+    .feedback-heading {
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: var(--gold);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feedback-heading::before {
+      content: '';
+      display: block;
+      width: 16px; height: 1px;
+      background: var(--gold);
+    }
+
+    .feedback-text {
+      font-size: 14px;
+      line-height: 1.9;
+      color: var(--navy);
+      background: var(--cream);
+      border-radius: 8px;
+      padding: 16px;
+      border-left: 3px solid var(--gold);
+      white-space: pre-wrap;
+    }
+
+    .point-list {
+      list-style: none;
+      margin-top: 12px;
+    }
+
+    .point-list li {
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.7;
+    }
+
+    .point-list li.good { background: rgba(16,185,129,.08); color: #065f46; }
+    .point-list li.bad  { background: rgba(239,68,68,.08); color: #991b1b; }
+    .point-list li .icon { flex-shrink: 0; }
+
+    .rationale-list {
+      list-style: none;
+      margin-top: 10px;
+    }
+
+    .rationale-item {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 14px;
+      margin-bottom: 10px;
+    }
+
+    .rationale-point {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .rationale-quote,
+    .rationale-reason {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #374151;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 700px) {
       .card { padding: 20px 16px; }
       .form-row { grid-template-columns: 1fr; }
-      .difficulty-grid { grid-template-columns: repeat(2, 1fr); }
+      .difficulty-grid { grid-template-columns: 1fr; }
       header { padding: 14px 16px; }
       .steps { gap: 4px; }
       .step-label { display: none; }
@@ -554,14 +620,13 @@
   </style>
 </head>
 <body>
-
 <header>
   <div class="logo-mark">CS</div>
   <div class="logo-text">
     <span class="en">Ciel Soir</span>
-    <span class="jp">読解採点システム</span>
+    <span class="jp">要約採点システム</span>
   </div>
-  <div class="header-badge">AI Scoring</div>
+  <div class="header-badge">Summary Only</div>
 </header>
 
 <main>
@@ -572,7 +637,7 @@
     </div>
     <div class="step" id="step2">
       <div class="step-num">2</div>
-      <span class="step-label">解答入力</span>
+      <span class="step-label">要約入力</span>
     </div>
     <div class="step" id="step3">
       <div class="step-num">3</div>
@@ -589,59 +654,73 @@
           <label>テーマ</label>
           <select id="theme">
             <option value="">── テーマを選択 ──</option>
-            <option value="自然・環境">🌿 自然・環境</option>
-            <option value="科学・技術">🔬 科学・技術</option>
-            <option value="歴史・文化">🏯 歴史・文化</option>
-            <option value="社会・福祉">🤝 社会・福祉</option>
-            <option value="文学・芸術">📖 文学・芸術</option>
-            <option value="哲学・倫理">💭 哲学・倫理</option>
-            <option value="スポーツ">⚽ スポーツ</option>
-            <option value="食・農業">🌾 食・農業</option>
-            <option value="医療・健康">🏥 医療・健康</option>
-            <option value="国際・異文化">🌍 国際・異文化</option>
+            <option value="AIの進化と人間性の変容">AIの進化と人間性の変容</option>
+            <option value="情報化社会におけるプライバシーと監視">情報化社会におけるプライバシーと監視</option>
+            <option value="ネット空間とリアル空間の身体性">ネット空間とリアル空間の身体性</option>
+            <option value="身体の道具化と主体性">身体の道具化と主体性</option>
+            <option value="医療技術と生命観">医療技術と生命観</option>
+            <option value="感覚・感情と合理性">感覚・感情と合理性</option>
+            <option value="グローバリゼーションとナショナリズム">グローバリゼーションとナショナリズム</option>
+            <option value="個人の成立と現代社会での孤立">個人の成立と現代社会での孤立</option>
+            <option value="都市空間とコミュニケーションの変容">都市空間とコミュニケーションの変容</option>
+            <option value="多文化共生とアイデンティティ">多文化共生とアイデンティティ</option>
+            <option value="言語と表現">言語と表現</option>
+            <option value="芸術と感性">芸術と感性</option>
+            <option value="哲学と思想">哲学と思想</option>
+            <option value="近代合理主義の逆説">近代合理主義の逆説</option>
+            <option value="時間意識の変化">時間意識の変化</option>
+            <option value="学校教育の意義と教育論">学校教育の意義と教育論</option>
+            <option value="メディアリテラシー">メディアリテラシー</option>
+            <option value="自己と他者の境界">自己と他者の境界</option>
+            <option value="主語の巨大化">主語の巨大化</option>
+            <option value="効率主義への懐疑">効率主義への懐疑</option>
+            <option value="身体感覚の復権">身体感覚の復権</option>
+            <option value="フェミニズム">フェミニズム</option>
+            <option value="麻雀の教育的意義">麻雀の教育的意義</option>
+            <option value="ポケモンはなぜヒットしたか">ポケモンはなぜヒットしたか</option>
+            <option value="ポップカルチャーの変容">ポップカルチャーの変容</option>
+            <option value="レヴィストロースが残した負の遺産">レヴィストロースが残した負の遺産</option>
+            <option value="ごみの分別のデメリット">ごみの分別のデメリット</option>
+            <option value="キルケゴールの功績">キルケゴールの功績</option>
+            <option value="カントの純粋理性批判とは">カントの純粋理性批判とは</option>
+            <option value="カントの実践理性批判とは">カントの実践理性批判とは</option>
+            <option value="カントの限界">カントの限界</option>
+            <option value="ニーチェ">ニーチェ</option>
+            <option value="ソシュール">ソシュール</option>
+            <option value="個別指導塾のメリットとデメリット">個別指導塾のメリットとデメリット</option>
           </select>
         </div>
+
         <div class="form-group">
-          <label>問題形式</label>
-          <select id="qtype">
-            <option value="記述式（200〜400字）">記述式（200〜400字）</option>
-            <option value="要約問題">要約問題</option>
-            <option value="内容把握＋理由説明">内容把握＋理由説明</option>
-            <option value="心情・気持ち読み取り">心情・気持ち読み取り</option>
-            <option value="語句・表現の意味">語句・表現の意味</option>
-          </select>
+          <label>形式</label>
+          <input type="text" value="要約問題のみ" disabled />
         </div>
       </div>
 
       <div class="form-group">
         <label>難易度</label>
         <div class="difficulty-grid">
-          <div class="diff-btn selected" data-level="小学校高学年">
+          <div class="diff-btn selected" data-level="小6・中1">
             <div class="diff-icon">🌱</div>
             <div class="diff-name">基礎</div>
-            <div class="diff-grade">小学校高学年</div>
+            <div class="diff-grade">小6・中1</div>
           </div>
-          <div class="diff-btn" data-level="中学校1〜2年">
-            <div class="diff-icon">📗</div>
-            <div class="diff-name">標準</div>
-            <div class="diff-grade">中学1〜2年</div>
-          </div>
-          <div class="diff-btn" data-level="中学校3年〜高校">
+          <div class="diff-btn" data-level="高校入試">
             <div class="diff-icon">📘</div>
-            <div class="diff-name">発展</div>
-            <div class="diff-grade">中3〜高校</div>
+            <div class="diff-name">標準</div>
+            <div class="diff-grade">高校入試</div>
           </div>
-          <div class="diff-btn" data-level="大学受験レベル">
+          <div class="diff-btn" data-level="大学入試">
             <div class="diff-icon">🏆</div>
-            <div class="diff-name">入試</div>
-            <div class="diff-grade">大学受験</div>
+            <div class="diff-name">発展</div>
+            <div class="diff-grade">大学入試</div>
           </div>
         </div>
       </div>
 
       <div class="form-group">
         <label>追加指示（任意）</label>
-        <textarea id="extra" rows="2" placeholder="例：環境問題の中でも海洋プラスチックについて / 文語調で / 登場人物が2名いる物語文で"></textarea>
+        <textarea id="extra" rows="2" placeholder="例：高校入試らしい論説文で / 具体例を1つ入れる / 抽象論と具体例を往復する構成にする"></textarea>
       </div>
 
       <div class="btn-row">
@@ -655,15 +734,16 @@
 
     <div id="gen-loading" class="loading">
       <div class="spinner"></div>
-      <div class="loading-text">問題を生成しています…</div>
+      <div class="loading-text">要約問題を生成しています…</div>
     </div>
 
     <div class="card" id="question-result" style="display:none;">
       <div class="card-title">生成された問題</div>
       <div class="question-meta" id="q-meta"></div>
       <div class="question-box" id="q-text"></div>
+      <div class="summary-task-box" id="summary-task-box"></div>
       <div class="btn-row">
-        <button class="btn btn-gold" onclick="goToAnswer()">この問題で解答する →</button>
+        <button class="btn btn-gold" onclick="goToAnswer()">この問題で採点する →</button>
         <button class="btn btn-outline" onclick="generateQuestion()">再生成</button>
       </div>
     </div>
@@ -673,11 +753,12 @@
     <div class="card">
       <div class="card-title">問題の確認</div>
       <div class="question-meta" id="q-meta2"></div>
-      <div class="question-box" id="q-text2" style="max-height:200px; overflow-y:auto;"></div>
+      <div class="question-box" id="q-text2" style="max-height:260px; overflow-y:auto;"></div>
+      <div class="summary-task-box" id="summary-task-box2"></div>
     </div>
 
     <div class="card">
-      <div class="card-title">解答の入力</div>
+      <div class="card-title">要約の入力</div>
 
       <div class="tab-row">
         <div class="tab active" onclick="switchTab(event, 'text')">✏️ テキスト入力</div>
@@ -686,9 +767,9 @@
 
       <div class="tab-panel active" id="tab-text">
         <div class="form-group">
-          <label>生徒の解答</label>
-          <textarea id="answer-text" rows="8" placeholder="ここに解答を入力してください…"></textarea>
-          <div class="hint">読んだ文章を参考にしながら、自分の言葉で丁寧に記述してください。</div>
+          <label>生徒の要約</label>
+          <textarea id="answer-text" rows="8" placeholder="ここに要約を入力してください…"></textarea>
+          <div class="hint">感想ではなく、本文の中心内容を簡潔にまとめてください。</div>
         </div>
       </div>
 
@@ -700,12 +781,12 @@
           <div class="upload-text" style="margin-top:6px; font-size:11px;">JPG / PNG / GIF ・最大10MB</div>
         </div>
         <img id="preview-img" alt="プレビュー" />
-        <div class="hint" style="margin-top:8px;">📝 手書き答案の写真でもAIが読み取って採点します</div>
+        <div class="hint" style="margin-top:8px;">手書き答案の写真でも採点できます。</div>
       </div>
 
       <div class="form-group" style="margin-top:16px;">
         <label>採点基準の補足（任意）</label>
-        <textarea id="rubric" rows="2" placeholder="例：キーワード「共生」を含めること / 3つの根拠を挙げること"></textarea>
+        <textarea id="rubric" rows="2" placeholder="例：主張と理由の両方を入れること / 具体例を入れすぎないこと"></textarea>
       </div>
 
       <div class="btn-row">
@@ -731,7 +812,7 @@
       <div class="score-hero">
         <div class="score-ring">
           <div class="score-num" id="res-score">—</div>
-          <div class="score-denom" id="res-total">/100</div>
+          <div class="score-denom">/100</div>
         </div>
         <div class="score-label">総合得点</div>
         <div><span class="grade-badge" id="res-grade"></span></div>
@@ -744,19 +825,24 @@
         <div class="feedback-text" id="res-comment"></div>
       </div>
 
-      <div class="feedback-section" style="margin-top:20px;">
+      <div class="feedback-section">
         <div class="feedback-heading">よかった点</div>
         <ul class="point-list" id="res-good"></ul>
       </div>
 
-      <div class="feedback-section" style="margin-top:16px;">
+      <div class="feedback-section">
         <div class="feedback-heading">改善ポイント</div>
         <ul class="point-list" id="res-bad"></ul>
       </div>
 
-      <div class="feedback-section" style="margin-top:20px;">
-        <div class="feedback-heading">模範解答のポイント</div>
+      <div class="feedback-section">
+        <div class="feedback-heading">模範要約</div>
         <div class="feedback-text" id="res-model"></div>
+      </div>
+
+      <div class="feedback-section">
+        <div class="feedback-heading">模範要約の根拠</div>
+        <ul class="rationale-list" id="res-rationale"></ul>
       </div>
 
       <hr class="divider" />
@@ -775,7 +861,7 @@
   let currentQuestion = {};
   let currentMeta = {};
   let currentTab = 'text';
-  let selectedDiff = '小学校高学年';
+  let selectedDiff = '小6・中1';
   let selectedImageFile = null;
 
   document.querySelectorAll('.diff-btn').forEach(btn => {
@@ -833,9 +919,31 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function getLengthSpec(level) {
+    switch (level) {
+      case '小6・中1':
+        return {
+          passage: '本文は400～500字程度。',
+          summary: 'summary_task は30～40字程度の要約指示にする。',
+          levelSpec: '難易度は小6・中1レベル。語彙は小学生高学年～中1が読める範囲を中心にし、主張は明確、具体例をやや多めにする。'
+        };
+      case '高校入試':
+        return {
+          passage: '本文は600～700字程度。',
+          summary: 'summary_task は50～65字程度の要約指示にする。',
+          levelSpec: '難易度は高校入試レベル。中学生が読める語彙を中心に、主張と理由、具体例と一般論のつながりが追いやすい文章にする。'
+        };
+      default:
+        return {
+          passage: '本文は700～800字程度、800字以内厳守。',
+          summary: 'summary_task は60～75字以内の要約指示にし、模範要約も75字以内にする。',
+          levelSpec: '難易度は大学入試レベル。抽象度を上げ、対比・反論処理・暗黙の前提を含み、本文全体を踏まえないと主張が取りにくい構成にする。'
+        };
+    }
+  }
+
   async function generateQuestion() {
     const theme = document.getElementById('theme').value;
-    const qtype = document.getElementById('qtype').value;
     const extra = document.getElementById('extra').value.trim();
 
     if (!theme) {
@@ -848,35 +956,67 @@
     document.getElementById('question-result').style.display = 'none';
     document.getElementById('gen-btn').disabled = true;
 
-    const prompt = `あなたは国語の読解問題作成の専門家です。以下の条件で読解問題を作成してください。
+    const spec = getLengthSpec(selectedDiff);
+
+    const prompt = `あなたは国語の読解問題作成者です。次の条件で論説文1本と要約問題のみを作成し、出力はJSONのみとしてください。説明文、前置き、Markdownは禁止です。
 
 【条件】
 - テーマ：${theme}
-- 問題形式：${qtype}
-- 難易度・対象：${selectedDiff}
-${extra ? '- 追加指示：' + extra : ''}
+- 難易度：${selectedDiff}
+- ${spec.passage}
+- 本文は4段落。
+- 各段落は1回ずつ改行で区切る。
+- 空行なし。
+- 各段落冒頭は全角スペース1字。
+- 段落途中では改行しない。
+- 文体は入試現代文の論説文。
+- 会話文は避ける。
+- 抽象論だけで終わらず、必要に応じて日常・学校・社会の具体例を0～2個入れる。
+- 定型的な書き出しや無難な構成に寄せず、毎回別の切り口・具体例・結論で書く。
+- ${spec.levelSpec}
+- 構成は次のいずれかを自然に用いること：
+  1. 問題提起→理由→具体例→結論
+  2. 具体例→問題→一般論→結論
+  3. 一般論→反対意見→反論→結論
+  4. 身近な場面→抽象化→対比→結論
+- 4択問題は絶対に作らない。
+- 要約問題のみを付ける。
+- ${spec.summary}
+- model_summary は簡潔で自然な日本語にする。
+- rubric には採点観点を4個程度入れる。
+- summary_rationale は3～4個程度にする。
 
-【出力形式】
-以下のJSON形式のみで出力してください（他の文字は一切不要）：
+${extra ? '【追加指示】\n- ' + extra : ''}
+
+【JSONキー】
 {
-  "passage": "（200〜500字程度の読解文。自然な文体で。）",
-  "question": "（問いの文章）",
-  "points": 100,
-  "answer_guide": "（採点時に参考にする解答のポイント・観点・キーワード）"
+  "passage":"本文",
+  "summary_task":"本文を◯字以内で要約せよ（感想禁止・丸写し禁止）",
+  "model_summary":"模範要約",
+  "rubric":["観点1","観点2","観点3","観点4"],
+  "summary_rationale":[
+    {"point":"要点1","quote":"引用1","reason":"説明1"},
+    {"point":"要点2","quote":"引用2","reason":"説明2"},
+    {"point":"要点3","quote":"引用3","reason":"説明3"}
+  ]
 }`;
 
     try {
       const resText = await callAPI(prompt);
       const json = extractJSON(resText);
 
-      if (!json.passage || !json.question) {
+      if (!json.passage || !json.summary_task || !json.model_summary) {
         throw new Error('問題データが不足しています。');
       }
 
       currentQuestion = json;
-      currentMeta = { theme, qtype, diff: selectedDiff };
+      currentMeta = {
+        theme,
+        diff: selectedDiff,
+        qtype: '要約問題'
+      };
 
-      renderQuestion('q-meta', 'q-text', json, currentMeta);
+      renderQuestion('q-meta', 'q-text', 'summary-task-box', json, currentMeta);
       document.getElementById('question-result').style.display = 'block';
     } catch (e) {
       showError('gen-error', '問題の生成に失敗しました。もう一度お試しください。\n' + e.message);
@@ -886,22 +1026,22 @@ ${extra ? '- 追加指示：' + extra : ''}
     }
   }
 
-  function renderQuestion(metaId, textId, json, meta) {
+  function renderQuestion(metaId, textId, taskId, json, meta) {
     document.getElementById(metaId).innerHTML =
       `<span class="tag tag-theme">${escapeHtml(meta.theme)}</span>
        <span class="tag tag-diff">${escapeHtml(meta.diff)}</span>
-       <span class="tag tag-theme">${escapeHtml(meta.qtype)}</span>`;
+       <span class="tag tag-summary">${escapeHtml(meta.qtype)}</span>`;
 
-    document.getElementById(textId).textContent =
-      `【文章】\n${json.passage}\n\n【問い】\n${json.question}`;
+    document.getElementById(textId).textContent = json.passage;
+    document.getElementById(taskId).textContent = '【要約】\n' + json.summary_task;
   }
 
   function goToAnswer() {
-    if (!currentQuestion || !currentQuestion.passage || !currentQuestion.question) {
+    if (!currentQuestion || !currentQuestion.passage || !currentQuestion.summary_task) {
       showError('gen-error', '先に問題を生成してください。');
       return;
     }
-    renderQuestion('q-meta2', 'q-text2', currentQuestion, currentMeta);
+    renderQuestion('q-meta2', 'q-text2', 'summary-task-box2', currentQuestion, currentMeta);
     showSection(2);
   }
 
@@ -910,24 +1050,24 @@ ${extra ? '- 追加指示：' + extra : ''}
   }
 
   async function scoreAnswer() {
-    if (!currentQuestion || !currentQuestion.passage || !currentQuestion.question) {
+    if (!currentQuestion || !currentQuestion.passage || !currentQuestion.summary_task) {
       showError('score-error', '問題データがありません。問題生成からやり直してください。');
       return;
     }
 
-    const rubric = document.getElementById('rubric').value.trim();
+    const rubricText = document.getElementById('rubric').value.trim();
     let answerContent = '';
 
     if (currentTab === 'text') {
       answerContent = document.getElementById('answer-text').value.trim();
       if (!answerContent) {
-        showError('score-error', '解答を入力してください。');
+        showError('score-error', '要約を入力してください。');
         return;
       }
     } else {
       const imgFile = selectedImageFile || document.getElementById('answer-img').files[0];
       if (!imgFile) {
-        showError('score-error', '解答の画像をアップロードしてください。');
+        showError('score-error', '要約画像をアップロードしてください。');
         return;
       }
       answerContent = '[画像解答]';
@@ -937,30 +1077,48 @@ ${extra ? '- 追加指示：' + extra : ''}
     setLoading('score', true);
     document.getElementById('score-btn').disabled = true;
 
-    const prompt = `あなたは国語の採点専門家です。以下の読解問題と生徒の解答を採点し、詳細なフィードバックを提供してください。
+    const prompt = `あなたは国語の要約問題の採点専門家です。以下の本文・設問・生徒答案を読み、要約として採点してください。出力はJSONのみです。
 
-【問題文】
+【本文】
 ${currentQuestion.passage}
 
-【設問】
-${currentQuestion.question}
+【要約問題】
+${currentQuestion.summary_task}
 
-【解答のポイント（採点基準）】
-${currentQuestion.answer_guide || '設問に適切に答えているか、根拠・表現・論理性を総合評価すること。'}
-${rubric ? '\n【追加採点基準】\n' + rubric : ''}
+【模範要約】
+${currentQuestion.model_summary}
 
-【生徒の解答】
+【採点観点】
+${Array.isArray(currentQuestion.rubric) ? currentQuestion.rubric.join(' / ') : '主張・理由・具体例・感想なし'}
+
+${rubricText ? '【追加採点基準】\n' + rubricText + '\n' : ''}
+
+【生徒答案】
 ${answerContent}
 
-【出力形式】
-以下のJSON形式のみで出力してください：
+【採点方針】
+- 本文全体の中心内容をつかめているか
+- 主張と理由のつながりがあるか
+- 具体例を除いて書いているか
+- 重要な要点を落としすぎていないか
+- 細部に偏りすぎていないか
+- 感想や自分の意見を書いていないか
+- 日本語として簡潔で自然か
+- 字数制限の趣旨に沿っているか
+
+【出力JSON】
 {
-  "score": （0〜100の整数）,
-  "grade": （"S"/"A"/"B"/"C"/"D"のいずれか）,
-  "comment": "（100〜200字の総合コメント）",
-  "good_points": ["よかった点1", "よかった点2"],
-  "improve_points": ["改善点1", "改善点2", "改善点3"],
-  "model_answer_hint": "（模範解答のポイントを200字程度で）"
+  "score": 0,
+  "grade": "A",
+  "comment": "総合コメント",
+  "good_points": ["よかった点1","よかった点2"],
+  "improve_points": ["改善点1","改善点2"],
+  "model_answer_hint": "模範要約",
+  "summary_rationale":[
+    {"point":"要点1","quote":"引用1","reason":"説明1"},
+    {"point":"要点2","quote":"引用2","reason":"説明2"},
+    {"point":"要点3","quote":"引用3","reason":"説明3"}
+  ]
 }
 
 採点基準：S(90-100点)、A(80-89点)、B(70-79点)、C(60-69点)、D(59点以下)`;
@@ -992,8 +1150,6 @@ ${answerContent}
     const grade = json.grade || scoreToGrade(score);
 
     document.getElementById('res-score').textContent = score;
-    document.getElementById('res-total').textContent = '/100';
-
     const gradeEl = document.getElementById('res-grade');
     gradeEl.textContent = grade;
     gradeEl.className = 'grade-badge grade-' + grade;
@@ -1002,18 +1158,27 @@ ${answerContent}
 
     const goodPoints = Array.isArray(json.good_points) ? json.good_points : [];
     const improvePoints = Array.isArray(json.improve_points) ? json.improve_points : [];
+    const rationale = Array.isArray(json.summary_rationale)
+      ? json.summary_rationale
+      : (Array.isArray(currentQuestion.summary_rationale) ? currentQuestion.summary_rationale : []);
 
-    const goodList = document.getElementById('res-good');
-    goodList.innerHTML = goodPoints.map(p =>
+    document.getElementById('res-good').innerHTML = goodPoints.map(p =>
       `<li class="good"><span class="icon">✓</span>${escapeHtml(p)}</li>`
     ).join('');
 
-    const badList = document.getElementById('res-bad');
-    badList.innerHTML = improvePoints.map(p =>
+    document.getElementById('res-bad').innerHTML = improvePoints.map(p =>
       `<li class="bad"><span class="icon">△</span>${escapeHtml(p)}</li>`
     ).join('');
 
-    document.getElementById('res-model').textContent = json.model_answer_hint || '';
+    document.getElementById('res-model').textContent = json.model_answer_hint || currentQuestion.model_summary || '';
+
+    document.getElementById('res-rationale').innerHTML = rationale.map((item, idx) => `
+      <li class="rationale-item">
+        <div class="rationale-point">要点${idx + 1}：${escapeHtml(item.point || '')}</div>
+        <div class="rationale-quote">引用：${escapeHtml(item.quote || '')}</div>
+        <div class="rationale-reason">説明：${escapeHtml(item.reason || '')}</div>
+      </li>
+    `).join('');
   }
 
   function scoreToGrade(s) {
@@ -1029,8 +1194,8 @@ ${answerContent}
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-opus-4-5',
-        max_tokens: 2048,
+        model: 'claude-opus-4-1',
+        max_tokens: 2500,
         messages: [{
           role: 'user',
           content: prompt
@@ -1038,18 +1203,31 @@ ${answerContent}
       })
     });
 
+    const rawText = await res.text();
+
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (e) {
+      throw new Error('APIがJSONを返していません: ' + rawText.slice(0, 300));
+    }
+
     if (!res.ok) {
-      const errorText = await safeReadText(res);
-      throw new Error(`HTTP ${res.status}${errorText ? ' / ' + errorText.slice(0, 300) : ''}`);
+      throw new Error(`HTTP ${res.status}: ` + rawText.slice(0, 300));
     }
 
-    const data = await res.json();
+    const text =
+      data?.content?.[0]?.text ??
+      data?.completion ??
+      data?.text ??
+      data?.result ??
+      '';
 
-    if (!data || !data.content || !Array.isArray(data.content) || !data.content[0] || !data.content[0].text) {
-      throw new Error('APIレスポンス形式が不正です。');
+    if (!text) {
+      throw new Error('APIレスポンスに本文がありません: ' + JSON.stringify(data).slice(0, 500));
     }
 
-    return data.content[0].text;
+    return text;
   }
 
   async function callAPIWithImage(prompt, base64, mediaType) {
@@ -1057,33 +1235,53 @@ ${answerContent}
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-opus-4-5',
-        max_tokens: 2048,
+        model: 'claude-opus-4-1',
+        max_tokens: 2500,
         messages: [{
           role: 'user',
           content: [
             {
               type: 'image',
-              source: { type: 'base64', media_type: mediaType, data: base64 }
+              source: {
+                type: 'base64',
+                media_type: mediaType,
+                data: base64
+              }
             },
-            { type: 'text', text: prompt }
+            {
+              type: 'text',
+              text: prompt
+            }
           ]
         }]
       })
     });
 
+    const rawText = await res.text();
+
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (e) {
+      throw new Error('APIがJSONを返していません: ' + rawText.slice(0, 300));
+    }
+
     if (!res.ok) {
-      const errorText = await safeReadText(res);
-      throw new Error(`HTTP ${res.status}${errorText ? ' / ' + errorText.slice(0, 300) : ''}`);
+      throw new Error(`HTTP ${res.status}: ` + rawText.slice(0, 300));
     }
 
-    const data = await res.json();
+    const text =
+      data?.content?.[0]?.text ??
+      data?.completion ??
+      data?.text ??
+      data?.result ??
+      '';
 
-    if (!data || !data.content || !Array.isArray(data.content) || !data.content[0] || !data.content[0].text) {
-      throw new Error('APIレスポンス形式が不正です。');
+    if (!text) {
+      throw new Error('APIレスポンスに本文がありません: ' + JSON.stringify(data).slice(0, 500));
     }
 
-    return data.content[0].text;
+    return text;
   }
 
   function extractJSON(text) {
@@ -1095,8 +1293,7 @@ ${answerContent}
     if (fencedMatch) {
       try {
         return JSON.parse(fencedMatch[1]);
-      } catch (e) {
-      }
+      } catch (e) {}
     }
 
     const match = text.match(/\{[\s\S]*\}/);
@@ -1190,14 +1387,6 @@ ${answerContent}
 
   function printResult() {
     window.print();
-  }
-
-  async function safeReadText(res) {
-    try {
-      return await res.text();
-    } catch {
-      return '';
-    }
   }
 
   function escapeHtml(str) {
