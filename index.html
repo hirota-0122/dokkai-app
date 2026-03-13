@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>読解採点アプリ｜Ciel Soir</title>
   <style>
-    /* ── リセット & ベース ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -30,7 +29,6 @@
       min-height: 100vh;
     }
 
-    /* ── ヘッダー ── */
     header {
       background: var(--navy);
       padding: 18px 32px;
@@ -84,14 +82,12 @@
       letter-spacing: 1px;
     }
 
-    /* ── メインレイアウト ── */
     main {
       max-width: 860px;
       margin: 0 auto;
       padding: 36px 20px 60px;
     }
 
-    /* ── ステップインジケーター ── */
     .steps {
       display: flex;
       align-items: center;
@@ -153,7 +149,6 @@
 
     .step.done .step-label { color: var(--gold); }
 
-    /* ── カード ── */
     .card {
       background: var(--white);
       border-radius: var(--radius);
@@ -182,7 +177,6 @@
       border-radius: 2px;
     }
 
-    /* ── フォーム部品 ── */
     label {
       display: block;
       font-size: 12px;
@@ -220,7 +214,6 @@
 
     .form-group { margin-bottom: 16px; }
 
-    /* ── ボタン ── */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -270,7 +263,6 @@
       flex-wrap: wrap;
     }
 
-    /* ── 難易度セレクター ── */
     .difficulty-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -299,7 +291,6 @@
     .diff-btn .diff-name { font-size: 11px; font-weight: bold; color: var(--navy); }
     .diff-btn .diff-grade { font-size: 10px; color: var(--gray); }
 
-    /* ── 問題表示 ── */
     .question-box {
       background: var(--cream);
       border: 1px solid var(--border);
@@ -335,7 +326,6 @@
       color: #8a6d2a;
     }
 
-    /* ── 写真入力 ── */
     .upload-area {
       border: 2px dashed var(--border);
       border-radius: 8px;
@@ -368,7 +358,6 @@
       display: none;
     }
 
-    /* ── タブ ── */
     .tab-row {
       display: flex;
       gap: 0;
@@ -396,7 +385,6 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ── 採点結果 ── */
     .score-hero {
       text-align: center;
       padding: 24px 0 16px;
@@ -498,7 +486,6 @@
     .point-list li.bad  { background: rgba(239,68,68,.08);  color: #991b1b; }
     .point-list li .icon { flex-shrink: 0; }
 
-    /* ── ローディング ── */
     .loading {
       display: none;
       flex-direction: column;
@@ -525,7 +512,6 @@
       letter-spacing: 2px;
     }
 
-    /* ── エラー ── */
     .error-box {
       background: rgba(239,68,68,.08);
       border: 1px solid rgba(239,68,68,.3);
@@ -535,15 +521,15 @@
       color: #b91c1c;
       display: none;
       margin-top: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .error-box.show { display: block; }
 
-    /* ── セクション表示制御 ── */
     .section { display: none; }
     .section.active { display: block; }
 
-    /* ── 装飾 ── */
     .divider {
       border: none;
       border-top: 1px solid var(--border);
@@ -557,7 +543,6 @@
       letter-spacing: .5px;
     }
 
-    /* ── レスポンシブ ── */
     @media (max-width: 600px) {
       .card { padding: 20px 16px; }
       .form-row { grid-template-columns: 1fr; }
@@ -570,7 +555,6 @@
 </head>
 <body>
 
-<!-- ヘッダー -->
 <header>
   <div class="logo-mark">CS</div>
   <div class="logo-text">
@@ -581,8 +565,6 @@
 </header>
 
 <main>
-
-  <!-- ステップインジケーター -->
   <div class="steps">
     <div class="step active" id="step1">
       <div class="step-num">1</div>
@@ -598,7 +580,6 @@
     </div>
   </div>
 
-  <!-- ─── SECTION 1: 問題生成 ─── -->
   <div class="section active" id="sec1">
     <div class="card">
       <div class="card-title">問題の設定</div>
@@ -688,7 +669,6 @@
     </div>
   </div>
 
-  <!-- ─── SECTION 2: 解答入力 ─── -->
   <div class="section" id="sec2">
     <div class="card">
       <div class="card-title">問題の確認</div>
@@ -700,11 +680,10 @@
       <div class="card-title">解答の入力</div>
 
       <div class="tab-row">
-        <div class="tab active" onclick="switchTab('text')">✏️ テキスト入力</div>
-        <div class="tab" onclick="switchTab('photo')">📷 写真・画像</div>
+        <div class="tab active" onclick="switchTab(event, 'text')">✏️ テキスト入力</div>
+        <div class="tab" onclick="switchTab(event, 'photo')">📷 写真・画像</div>
       </div>
 
-      <!-- テキスト入力 -->
       <div class="tab-panel active" id="tab-text">
         <div class="form-group">
           <label>生徒の解答</label>
@@ -713,7 +692,6 @@
         </div>
       </div>
 
-      <!-- 写真入力 -->
       <div class="tab-panel" id="tab-photo">
         <div class="upload-area" id="upload-area">
           <input type="file" id="answer-img" accept="image/*" onchange="previewImage(event)" />
@@ -746,7 +724,6 @@
     </div>
   </div>
 
-  <!-- ─── SECTION 3: 採点結果 ─── -->
   <div class="section" id="sec3">
     <div class="card">
       <div class="card-title">採点結果</div>
@@ -790,18 +767,17 @@
       </div>
     </div>
   </div>
-
 </main>
 
 <script>
-  /* ── 状態管理 ── */
   const API_URL = 'https://dokkai-api.r-hirota0122.workers.dev';
-  let currentQuestion = '';
+
+  let currentQuestion = {};
   let currentMeta = {};
   let currentTab = 'text';
   let selectedDiff = '小学校高学年';
+  let selectedImageFile = null;
 
-  /* ── 難易度ボタン ── */
   document.querySelectorAll('.diff-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
@@ -810,29 +786,37 @@
     });
   });
 
-  /* ── ドラッグ&ドロップ ── */
   const uploadArea = document.getElementById('upload-area');
-  ['dragover','dragleave','drop'].forEach(e => {
-    uploadArea.addEventListener(e, ev => {
+
+  ['dragover', 'dragleave', 'drop'].forEach(type => {
+    uploadArea.addEventListener(type, ev => {
       ev.preventDefault();
-      uploadArea.classList.toggle('dragover', e === 'dragover');
-      if (e === 'drop') {
-        const file = ev.dataTransfer.files[0];
-        if (file) loadImageFile(file);
+
+      if (type === 'dragover') {
+        uploadArea.classList.add('dragover');
+      } else {
+        uploadArea.classList.remove('dragover');
+      }
+
+      if (type === 'drop') {
+        const file = ev.dataTransfer && ev.dataTransfer.files ? ev.dataTransfer.files[0] : null;
+        if (file) {
+          selectedImageFile = file;
+          loadImageFile(file);
+        }
       }
     });
   });
 
-  /* ── タブ切替 ── */
-  function switchTab(tab) {
+  function switchTab(ev, tab) {
     currentTab = tab;
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    ev.currentTarget.classList.add('active');
     document.getElementById('tab-' + tab).classList.add('active');
+    clearError('score-error');
   }
 
-  /* ── ステップ更新 ── */
   function setStep(active) {
     for (let i = 1; i <= 3; i++) {
       const el = document.getElementById('step' + i);
@@ -849,13 +833,15 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /* ── 問題生成 ── */
   async function generateQuestion() {
     const theme = document.getElementById('theme').value;
     const qtype = document.getElementById('qtype').value;
-    const extra = document.getElementById('extra').value;
+    const extra = document.getElementById('extra').value.trim();
 
-    if (!theme) { showError('gen-error', 'テーマを選択してください。'); return; }
+    if (!theme) {
+      showError('gen-error', 'テーマを選択してください。');
+      return;
+    }
 
     clearError('gen-error');
     setLoading('gen', true);
@@ -880,14 +866,19 @@ ${extra ? '- 追加指示：' + extra : ''}
 }`;
 
     try {
-      const res = await callAPI(prompt);
-      const json = extractJSON(res);
+      const resText = await callAPI(prompt);
+      const json = extractJSON(resText);
+
+      if (!json.passage || !json.question) {
+        throw new Error('問題データが不足しています。');
+      }
+
       currentQuestion = json;
       currentMeta = { theme, qtype, diff: selectedDiff };
 
       renderQuestion('q-meta', 'q-text', json, currentMeta);
       document.getElementById('question-result').style.display = 'block';
-    } catch(e) {
+    } catch (e) {
       showError('gen-error', '問題の生成に失敗しました。もう一度お試しください。\n' + e.message);
     } finally {
       setLoading('gen', false);
@@ -897,32 +888,48 @@ ${extra ? '- 追加指示：' + extra : ''}
 
   function renderQuestion(metaId, textId, json, meta) {
     document.getElementById(metaId).innerHTML =
-      `<span class="tag tag-theme">${meta.theme}</span>
-       <span class="tag tag-diff">${meta.diff}</span>
-       <span class="tag tag-theme">${meta.qtype}</span>`;
+      `<span class="tag tag-theme">${escapeHtml(meta.theme)}</span>
+       <span class="tag tag-diff">${escapeHtml(meta.diff)}</span>
+       <span class="tag tag-theme">${escapeHtml(meta.qtype)}</span>`;
+
     document.getElementById(textId).textContent =
       `【文章】\n${json.passage}\n\n【問い】\n${json.question}`;
   }
 
-  /* ── 解答セクションへ ── */
   function goToAnswer() {
+    if (!currentQuestion || !currentQuestion.passage || !currentQuestion.question) {
+      showError('gen-error', '先に問題を生成してください。');
+      return;
+    }
     renderQuestion('q-meta2', 'q-text2', currentQuestion, currentMeta);
     showSection(2);
   }
 
-  function backToGen() { showSection(1); }
+  function backToGen() {
+    showSection(1);
+  }
 
-  /* ── 採点 ── */
   async function scoreAnswer() {
-    const rubric = document.getElementById('rubric').value;
+    if (!currentQuestion || !currentQuestion.passage || !currentQuestion.question) {
+      showError('score-error', '問題データがありません。問題生成からやり直してください。');
+      return;
+    }
+
+    const rubric = document.getElementById('rubric').value.trim();
     let answerContent = '';
 
     if (currentTab === 'text') {
       answerContent = document.getElementById('answer-text').value.trim();
-      if (!answerContent) { showError('score-error', '解答を入力してください。'); return; }
+      if (!answerContent) {
+        showError('score-error', '解答を入力してください。');
+        return;
+      }
     } else {
-      const imgFile = document.getElementById('answer-img').files[0];
-      if (!imgFile) { showError('score-error', '解答の画像をアップロードしてください。'); return; }
+      const imgFile = selectedImageFile || document.getElementById('answer-img').files[0];
+      if (!imgFile) {
+        showError('score-error', '解答の画像をアップロードしてください。');
+        return;
+      }
       answerContent = '[画像解答]';
     }
 
@@ -939,7 +946,7 @@ ${currentQuestion.passage}
 ${currentQuestion.question}
 
 【解答のポイント（採点基準）】
-${currentQuestion.answer_guide}
+${currentQuestion.answer_guide || '設問に適切に答えているか、根拠・表現・論理性を総合評価すること。'}
 ${rubric ? '\n【追加採点基準】\n' + rubric : ''}
 
 【生徒の解答】
@@ -959,19 +966,20 @@ ${answerContent}
 採点基準：S(90-100点)、A(80-89点)、B(70-79点)、C(60-69点)、D(59点以下)`;
 
     try {
-      let res;
+      let resText;
+
       if (currentTab === 'photo') {
-        const imgFile = document.getElementById('answer-img').files[0];
+        const imgFile = selectedImageFile || document.getElementById('answer-img').files[0];
         const b64 = await fileToBase64(imgFile);
-        res = await callAPIWithImage(prompt, b64, imgFile.type);
+        resText = await callAPIWithImage(prompt, b64, imgFile.type);
       } else {
-        res = await callAPI(prompt);
+        resText = await callAPI(prompt);
       }
 
-      const json = extractJSON(res);
+      const json = extractJSON(resText);
       renderResult(json);
       showSection(3);
-    } catch(e) {
+    } catch (e) {
       showError('score-error', '採点に失敗しました。もう一度お試しください。\n' + e.message);
     } finally {
       setLoading('score', false);
@@ -979,27 +987,33 @@ ${answerContent}
     }
   }
 
-  /* ── 結果描画 ── */
   function renderResult(json) {
-    document.getElementById('res-score').textContent = json.score;
+    const score = Number.isFinite(Number(json.score)) ? Math.max(0, Math.min(100, Number(json.score))) : 0;
+    const grade = json.grade || scoreToGrade(score);
+
+    document.getElementById('res-score').textContent = score;
     document.getElementById('res-total').textContent = '/100';
 
-    const grade = json.grade || scoreToGrade(json.score);
     const gradeEl = document.getElementById('res-grade');
     gradeEl.textContent = grade;
     gradeEl.className = 'grade-badge grade-' + grade;
 
-    document.getElementById('res-comment').textContent = json.comment;
+    document.getElementById('res-comment').textContent = json.comment || '';
+
+    const goodPoints = Array.isArray(json.good_points) ? json.good_points : [];
+    const improvePoints = Array.isArray(json.improve_points) ? json.improve_points : [];
 
     const goodList = document.getElementById('res-good');
-    goodList.innerHTML = (json.good_points || []).map(p =>
-      `<li class="good"><span class="icon">✓</span>${p}</li>`).join('');
+    goodList.innerHTML = goodPoints.map(p =>
+      `<li class="good"><span class="icon">✓</span>${escapeHtml(p)}</li>`
+    ).join('');
 
     const badList = document.getElementById('res-bad');
-    badList.innerHTML = (json.improve_points || []).map(p =>
-      `<li class="bad"><span class="icon">△</span>${p}</li>`).join('');
+    badList.innerHTML = improvePoints.map(p =>
+      `<li class="bad"><span class="icon">△</span>${escapeHtml(p)}</li>`
+    ).join('');
 
-    document.getElementById('res-model').textContent = json.model_answer_hint;
+    document.getElementById('res-model').textContent = json.model_answer_hint || '';
   }
 
   function scoreToGrade(s) {
@@ -1010,7 +1024,6 @@ ${answerContent}
     return 'D';
   }
 
-  /* ── API呼び出し ── */
   async function callAPI(prompt) {
     const res = await fetch(API_URL, {
       method: 'POST',
@@ -1024,8 +1037,18 @@ ${answerContent}
         }]
       })
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    if (!res.ok) {
+      const errorText = await safeReadText(res);
+      throw new Error(`HTTP ${res.status}${errorText ? ' / ' + errorText.slice(0, 300) : ''}`);
+    }
+
     const data = await res.json();
+
+    if (!data || !data.content || !Array.isArray(data.content) || !data.content[0] || !data.content[0].text) {
+      throw new Error('APIレスポンス形式が不正です。');
+    }
+
     return data.content[0].text;
   }
 
@@ -1048,30 +1071,69 @@ ${answerContent}
         }]
       })
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    if (!res.ok) {
+      const errorText = await safeReadText(res);
+      throw new Error(`HTTP ${res.status}${errorText ? ' / ' + errorText.slice(0, 300) : ''}`);
+    }
+
     const data = await res.json();
+
+    if (!data || !data.content || !Array.isArray(data.content) || !data.content[0] || !data.content[0].text) {
+      throw new Error('APIレスポンス形式が不正です。');
+    }
+
     return data.content[0].text;
   }
 
-  /* ── ユーティリティ ── */
   function extractJSON(text) {
+    if (typeof text !== 'string' || !text.trim()) {
+      throw new Error('APIから空の応答が返されました。');
+    }
+
+    const fencedMatch = text.match(/```json\s*([\s\S]*?)```/i);
+    if (fencedMatch) {
+      try {
+        return JSON.parse(fencedMatch[1]);
+      } catch (e) {
+      }
+    }
+
     const match = text.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('JSONが取得できませんでした');
-    return JSON.parse(match[0]);
+    if (!match) {
+      throw new Error('JSONが取得できませんでした。応答冒頭: ' + text.slice(0, 200));
+    }
+
+    try {
+      return JSON.parse(match[0]);
+    } catch (e) {
+      throw new Error('JSON解析失敗: ' + e.message + '\n応答冒頭: ' + match[0].slice(0, 200));
+    }
   }
 
   function fileToBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = e => resolve(e.target.result.split(',')[1]);
-      reader.onerror = reject;
+      reader.onload = e => {
+        const result = e.target && e.target.result ? String(e.target.result) : '';
+        const commaIndex = result.indexOf(',');
+        if (commaIndex === -1) {
+          reject(new Error('画像データの読み取りに失敗しました。'));
+          return;
+        }
+        resolve(result.slice(commaIndex + 1));
+      };
+      reader.onerror = () => reject(new Error('画像の読み込みに失敗しました。'));
       reader.readAsDataURL(file);
     });
   }
 
   function previewImage(e) {
-    const file = e.target.files[0];
-    if (file) loadImageFile(file);
+    const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+    if (file) {
+      selectedImageFile = file;
+      loadImageFile(file);
+    }
   }
 
   function loadImageFile(file) {
@@ -1107,12 +1169,44 @@ ${answerContent}
     document.getElementById('preview-img').src = '';
     document.getElementById('rubric').value = '';
     document.getElementById('question-result').style.display = 'none';
+
     currentQuestion = {};
+    currentMeta = {};
+    currentTab = 'text';
+    selectedImageFile = null;
+
+    document.querySelectorAll('.tab').forEach((tab, idx) => {
+      tab.classList.toggle('active', idx === 0);
+    });
+    document.querySelectorAll('.tab-panel').forEach((panel, idx) => {
+      panel.classList.toggle('active', idx === 0);
+    });
+
+    clearError('gen-error');
+    clearError('score-error');
+
     showSection(1);
   }
 
   function printResult() {
     window.print();
+  }
+
+  async function safeReadText(res) {
+    try {
+      return await res.text();
+    } catch {
+      return '';
+    }
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
   }
 </script>
 </body>
