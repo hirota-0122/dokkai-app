@@ -3,52 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>要約採点アプリ｜Ciel Soir</title>
+  <title>要約採点アプリ｜丸一塾</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --navy:   #1a2340;
-      --gold:   #c9a84c;
-      --gold-l: #e8d5a0;
-      --cream:  #faf8f3;
-      --white:  #ffffff;
-      --gray:   #6b7280;
-      --border: #e2d9c8;
-      --shadow: 0 4px 24px rgba(26,35,64,.10);
+      --green: #0fad00;
+      --green-d: #0a8700;
+      --red: #ff3600;
+      --red-d: #d92e00;
+      --yellow: #feed01;
+      --yellow-d: #d7c600;
+      --black: #111111;
+      --white: #ffffff;
+      --bg: #f8fbf7;
+      --bg-soft: #eef8eb;
+      --gray: #5f6b63;
+      --border: #d7e6d2;
+      --shadow: 0 6px 24px rgba(17,17,17,.08);
       --radius: 12px;
       --font-jp: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
-      --font-en: 'Georgia', serif;
     }
 
     body {
       font-family: var(--font-jp);
-      background: var(--cream);
-      color: var(--navy);
+      background: var(--bg);
+      color: var(--black);
       min-height: 100vh;
+      line-height: 1.7;
     }
 
     header {
-      background: var(--navy);
-      padding: 18px 32px;
+      background: var(--white);
+      border-bottom: 3px solid var(--green);
+      padding: 16px 28px;
       display: flex;
       align-items: center;
       gap: 14px;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
     }
 
     .logo-mark {
-      width: 38px; height: 38px;
-      border: 2px solid var(--gold);
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-en);
-      color: var(--gold);
-      font-size: 15px;
-      letter-spacing: 1px;
+      background: var(--green);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
       flex-shrink: 0;
     }
 
@@ -58,41 +66,41 @@
       line-height: 1.2;
     }
 
-    .logo-text .en {
-      font-family: var(--font-en);
-      color: var(--gold);
-      font-size: 17px;
-      letter-spacing: 3px;
-      font-style: italic;
+    .logo-text .jp-main {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--black);
+      letter-spacing: 1px;
     }
 
-    .logo-text .jp {
-      color: rgba(255,255,255,.65);
-      font-size: 10px;
-      letter-spacing: 2px;
-    }
-
-    .header-badge {
-      margin-left: auto;
-      background: rgba(201,168,76,.15);
-      border: 1px solid var(--gold);
-      color: var(--gold);
-      padding: 4px 12px;
-      border-radius: 20px;
+    .logo-text .jp-sub {
+      color: var(--gray);
       font-size: 11px;
       letter-spacing: 1px;
     }
 
+    .header-badge {
+      margin-left: auto;
+      background: rgba(255, 54, 0, .08);
+      border: 1px solid rgba(255, 54, 0, .25);
+      color: var(--red);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
     main {
-      max-width: 920px;
+      max-width: 980px;
       margin: 0 auto;
-      padding: 36px 20px 60px;
+      padding: 32px 20px 60px;
     }
 
     .steps {
       display: flex;
       align-items: center;
-      margin-bottom: 36px;
+      margin-bottom: 32px;
       gap: 0;
     }
 
@@ -107,7 +115,7 @@
     .step::after {
       content: '';
       flex: 1;
-      height: 1px;
+      height: 2px;
       background: var(--border);
       margin: 0 8px;
     }
@@ -115,56 +123,60 @@
     .step:last-child::after { display: none; }
 
     .step-num {
-      width: 30px; height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 12px;
-      font-family: var(--font-en);
+      font-weight: 700;
       border: 2px solid var(--border);
       color: var(--gray);
       background: var(--white);
       flex-shrink: 0;
-      transition: all .3s;
+      transition: all .25s;
     }
 
     .step-label {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--gray);
       white-space: nowrap;
-      transition: color .3s;
+      transition: color .25s;
+      font-weight: 700;
     }
 
     .step.active .step-num {
-      background: var(--navy);
-      border-color: var(--navy);
+      background: var(--green);
+      border-color: var(--green);
       color: var(--white);
     }
 
-    .step.active .step-label { color: var(--navy); font-weight: 700; }
+    .step.active .step-label { color: var(--green-d); }
 
     .step.done .step-num {
-      background: var(--gold);
-      border-color: var(--gold);
-      color: var(--white);
+      background: var(--yellow);
+      border-color: var(--yellow-d);
+      color: var(--black);
     }
 
-    .step.done .step-label { color: var(--gold); }
+    .step.done .step-label { color: var(--black); }
 
     .card {
       background: var(--white);
       border-radius: var(--radius);
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
-      padding: 32px 36px;
-      margin-bottom: 24px;
+      padding: 28px 32px;
+      margin-bottom: 22px;
     }
 
     .card-title {
       font-size: 15px;
-      font-weight: 700;
-      color: var(--navy);
-      letter-spacing: 1px;
-      margin-bottom: 20px;
+      font-weight: 800;
+      color: var(--black);
+      letter-spacing: .5px;
+      margin-bottom: 18px;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -173,8 +185,9 @@
     .card-title::before {
       content: '';
       display: block;
-      width: 3px; height: 18px;
-      background: var(--gold);
+      width: 4px;
+      height: 18px;
+      background: var(--red);
       border-radius: 2px;
     }
 
@@ -182,26 +195,28 @@
       display: block;
       font-size: 12px;
       color: var(--gray);
-      letter-spacing: 1px;
+      letter-spacing: .5px;
       margin-bottom: 6px;
+      font-weight: 700;
     }
 
     select, textarea, input[type="text"] {
       width: 100%;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 14px;
+      border-radius: 10px;
+      padding: 11px 14px;
       font-family: var(--font-jp);
       font-size: 14px;
-      color: var(--navy);
-      background: var(--cream);
+      color: var(--black);
+      background: #fbfefb;
       outline: none;
-      transition: border-color .2s, background .2s;
+      transition: border-color .2s, background .2s, box-shadow .2s;
     }
 
     select:focus, textarea:focus, input[type="text"]:focus {
-      border-color: var(--gold);
+      border-color: var(--green);
       background: var(--white);
+      box-shadow: 0 0 0 3px rgba(15, 173, 0, .08);
     }
 
     textarea {
@@ -225,48 +240,63 @@
       justify-content: center;
       gap: 8px;
       padding: 12px 28px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-family: var(--font-jp);
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       border: none;
       transition: all .2s;
-      letter-spacing: 1px;
+      letter-spacing: .5px;
+      text-decoration: none;
     }
 
     .btn-primary {
-      background: var(--navy);
+      background: var(--green);
       color: var(--white);
     }
 
     .btn-primary:hover {
-      background: #263357;
+      background: var(--green-d);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(26,35,64,.3);
+      box-shadow: 0 4px 14px rgba(15, 173, 0, .25);
     }
 
-    .btn-gold {
-      background: var(--gold);
+    .btn-accent {
+      background: var(--red);
       color: var(--white);
     }
 
-    .btn-gold:hover {
-      background: #b8973e;
+    .btn-accent:hover {
+      background: var(--red-d);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(201,168,76,.4);
+      box-shadow: 0 4px 14px rgba(255, 54, 0, .22);
     }
 
     .btn-outline {
       background: transparent;
       border: 1px solid var(--border);
-      color: var(--navy);
+      color: var(--black);
     }
 
-    .btn-outline:hover { border-color: var(--navy); }
+    .btn-outline:hover {
+      border-color: var(--green);
+      color: var(--green-d);
+      background: rgba(15,173,0,.03);
+    }
+
+    .btn-subtle {
+      background: rgba(254, 237, 1, .18);
+      color: var(--black);
+      border: 1px solid rgba(215, 198, 0, .35);
+    }
+
+    .btn-subtle:hover {
+      background: rgba(254, 237, 1, .28);
+    }
 
     .btn:disabled {
-      opacity: .5;
+      opacity: .55;
       cursor: not-allowed;
       transform: none !important;
       box-shadow: none !important;
@@ -288,29 +318,30 @@
 
     .diff-btn {
       border: 2px solid var(--border);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 12px 8px;
       text-align: center;
       cursor: pointer;
-      background: var(--cream);
+      background: #fbfefb;
       transition: all .2s;
     }
 
-    .diff-btn:hover { border-color: var(--gold-l); }
+    .diff-btn:hover { border-color: rgba(15,173,0,.4); }
 
     .diff-btn.selected {
-      border-color: var(--gold);
-      background: rgba(201,168,76,.08);
+      border-color: var(--green);
+      background: rgba(15,173,0,.06);
+      box-shadow: inset 0 0 0 1px rgba(15,173,0,.06);
     }
 
     .diff-btn .diff-icon { font-size: 18px; margin-bottom: 5px; }
-    .diff-btn .diff-name { font-size: 12px; font-weight: 700; color: var(--navy); }
+    .diff-btn .diff-name { font-size: 12px; font-weight: 800; color: var(--black); }
     .diff-btn .diff-grade { font-size: 10px; color: var(--gray); margin-top: 2px; }
 
     .question-box {
-      background: var(--cream);
+      background: #fcfefc;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 20px;
       line-height: 1.9;
       font-size: 14px;
@@ -326,31 +357,32 @@
     }
 
     .tag {
-      padding: 3px 10px;
-      border-radius: 20px;
+      padding: 4px 10px;
+      border-radius: 999px;
       font-size: 11px;
-      letter-spacing: 1px;
+      letter-spacing: .5px;
+      font-weight: 700;
     }
 
     .tag-theme {
-      background: rgba(26,35,64,.08);
-      color: var(--navy);
+      background: rgba(15,173,0,.1);
+      color: var(--green-d);
     }
 
     .tag-diff {
-      background: rgba(201,168,76,.15);
-      color: #8a6d2a;
+      background: rgba(254,237,1,.25);
+      color: #6f6900;
     }
 
     .tag-summary {
-      background: rgba(16,185,129,.10);
-      color: #065f46;
+      background: rgba(255,54,0,.1);
+      color: var(--red-d);
     }
 
     .summary-task-box {
-      background: rgba(201,168,76,.08);
-      border: 1px solid rgba(201,168,76,.35);
-      border-radius: 8px;
+      background: rgba(254,237,1,.12);
+      border: 1px solid rgba(215,198,0,.35);
+      border-radius: 10px;
       padding: 14px 16px;
       line-height: 1.8;
       font-size: 14px;
@@ -358,19 +390,51 @@
       white-space: pre-wrap;
     }
 
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .mini-box {
+      background: #fbfefb;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .mini-box h4 {
+      font-size: 12px;
+      margin-bottom: 6px;
+      color: var(--gray);
+      letter-spacing: .5px;
+    }
+
+    .mini-box p, .mini-box li {
+      font-size: 13px;
+      color: var(--black);
+      line-height: 1.7;
+    }
+
+    .mini-box ul {
+      margin-left: 18px;
+    }
+
     .upload-area {
       border: 2px dashed var(--border);
-      border-radius: 8px;
-      padding: 32px;
+      border-radius: 10px;
+      padding: 30px;
       text-align: center;
       cursor: pointer;
       transition: all .2s;
       position: relative;
+      background: #fcfefc;
     }
 
     .upload-area:hover, .upload-area.dragover {
-      border-color: var(--gold);
-      background: rgba(201,168,76,.04);
+      border-color: var(--green);
+      background: rgba(15,173,0,.04);
     }
 
     .upload-area input[type="file"] {
@@ -382,13 +446,13 @@
       height: 100%;
     }
 
-    .upload-icon { font-size: 36px; margin-bottom: 8px; }
+    .upload-icon { font-size: 34px; margin-bottom: 8px; }
     .upload-text { font-size: 13px; color: var(--gray); }
-    .upload-text strong { color: var(--navy); }
+    .upload-text strong { color: var(--black); }
 
     #preview-img {
       max-width: 100%;
-      border-radius: 8px;
+      border-radius: 10px;
       margin-top: 12px;
       border: 1px solid var(--border);
       display: none;
@@ -406,16 +470,16 @@
       font-size: 13px;
       cursor: pointer;
       color: var(--gray);
-      border-bottom: 2px solid transparent;
+      border-bottom: 3px solid transparent;
       margin-bottom: -2px;
       transition: all .2s;
-      letter-spacing: 1px;
+      letter-spacing: .5px;
+      font-weight: 700;
     }
 
     .tab.active {
-      color: var(--navy);
-      border-bottom-color: var(--gold);
-      font-weight: 700;
+      color: var(--green-d);
+      border-bottom-color: var(--green);
     }
 
     .tab-panel { display: none; }
@@ -432,9 +496,10 @@
     .loading.show { display: flex; }
 
     .spinner {
-      width: 40px; height: 40px;
+      width: 40px;
+      height: 40px;
       border: 3px solid var(--border);
-      border-top-color: var(--gold);
+      border-top-color: var(--green);
       border-radius: 50%;
       animation: spin .8s linear infinite;
     }
@@ -444,16 +509,17 @@
     .loading-text {
       font-size: 13px;
       color: var(--gray);
-      letter-spacing: 2px;
+      letter-spacing: 1px;
+      font-weight: 700;
     }
 
     .error-box {
-      background: rgba(239,68,68,.08);
-      border: 1px solid rgba(239,68,68,.3);
-      border-radius: 8px;
+      background: rgba(255,54,0,.08);
+      border: 1px solid rgba(255,54,0,.22);
+      border-radius: 10px;
       padding: 14px 16px;
       font-size: 13px;
-      color: #b91c1c;
+      color: #a62700;
       display: none;
       margin-top: 12px;
       white-space: pre-wrap;
@@ -461,6 +527,18 @@
     }
 
     .error-box.show { display: block; }
+
+    .info-box {
+      background: rgba(15,173,0,.06);
+      border: 1px solid rgba(15,173,0,.18);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--green-d);
+      margin-top: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
 
     .section { display: none; }
     .section.active { display: block; }
@@ -475,7 +553,7 @@
       font-size: 11px;
       color: var(--gray);
       margin-top: 6px;
-      letter-spacing: .5px;
+      letter-spacing: .2px;
     }
 
     .score-hero {
@@ -487,19 +565,19 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 108px;
-      height: 108px;
+      width: 112px;
+      height: 112px;
       border-radius: 50%;
-      border: 5px solid var(--gold);
+      border: 5px solid var(--green);
       flex-direction: column;
       margin-bottom: 12px;
+      background: rgba(15,173,0,.04);
     }
 
     .score-num {
       font-size: 34px;
-      font-weight: 700;
-      color: var(--navy);
-      font-family: var(--font-en);
+      font-weight: 800;
+      color: var(--black);
       line-height: 1;
     }
 
@@ -511,53 +589,55 @@
     .score-label {
       font-size: 13px;
       color: var(--gray);
-      letter-spacing: 2px;
+      letter-spacing: 1px;
+      font-weight: 700;
     }
 
     .grade-badge {
       display: inline-block;
       font-size: 20px;
-      font-weight: 700;
+      font-weight: 800;
       padding: 6px 20px;
       border-radius: 24px;
       margin-top: 8px;
-      font-family: var(--font-en);
       letter-spacing: 2px;
     }
 
-    .grade-S { background: rgba(201,168,76,.2); color: #8a6d2a; }
-    .grade-A { background: rgba(26,35,64,.1); color: var(--navy); }
-    .grade-B { background: rgba(107,114,128,.1); color: #374151; }
-    .grade-C { background: rgba(249,115,22,.1); color: #c2410c; }
-    .grade-D { background: rgba(239,68,68,.1); color: #b91c1c; }
+    .grade-S { background: rgba(254,237,1,.4); color: #5c5600; }
+    .grade-A { background: rgba(15,173,0,.12); color: var(--green-d); }
+    .grade-B { background: rgba(17,17,17,.07); color: #333; }
+    .grade-C { background: rgba(255,140,0,.12); color: #b16200; }
+    .grade-D { background: rgba(255,54,0,.12); color: #a62700; }
 
     .feedback-section { margin-top: 20px; }
 
     .feedback-heading {
       font-size: 12px;
-      letter-spacing: 2px;
-      color: var(--gold);
+      letter-spacing: 1px;
+      color: var(--red);
       margin-bottom: 8px;
       display: flex;
       align-items: center;
       gap: 6px;
+      font-weight: 800;
     }
 
     .feedback-heading::before {
       content: '';
       display: block;
-      width: 16px; height: 1px;
-      background: var(--gold);
+      width: 16px;
+      height: 2px;
+      background: var(--red);
     }
 
     .feedback-text {
       font-size: 14px;
       line-height: 1.9;
-      color: var(--navy);
-      background: var(--cream);
-      border-radius: 8px;
+      color: var(--black);
+      background: #fbfefb;
+      border-radius: 10px;
       padding: 16px;
-      border-left: 3px solid var(--gold);
+      border-left: 4px solid var(--green);
       white-space: pre-wrap;
     }
 
@@ -569,7 +649,7 @@
     .point-list li {
       font-size: 13px;
       padding: 8px 12px;
-      border-radius: 6px;
+      border-radius: 8px;
       margin-bottom: 6px;
       display: flex;
       align-items: flex-start;
@@ -577,9 +657,9 @@
       line-height: 1.7;
     }
 
-    .point-list li.good { background: rgba(16,185,129,.08); color: #065f46; }
-    .point-list li.bad  { background: rgba(239,68,68,.08); color: #991b1b; }
-    .point-list li .icon { flex-shrink: 0; }
+    .point-list li.good { background: rgba(15,173,0,.08); color: var(--green-d); }
+    .point-list li.bad  { background: rgba(255,54,0,.08); color: #a62700; }
+    .point-list li .icon { flex-shrink: 0; font-weight: 800; }
 
     .rationale-list {
       list-style: none;
@@ -587,17 +667,17 @@
     }
 
     .rationale-item {
-      background: var(--cream);
+      background: #fbfefb;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 14px;
+      border-radius: 10px;
+      padding: 14px;
       margin-bottom: 10px;
     }
 
     .rationale-point {
-      font-weight: 700;
+      font-weight: 800;
       font-size: 13px;
-      color: var(--navy);
+      color: var(--black);
       margin-bottom: 4px;
     }
 
@@ -609,24 +689,126 @@
       white-space: pre-wrap;
     }
 
-    @media (max-width: 700px) {
+    .char-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .char-ok {
+      background: rgba(15,173,0,.08);
+      color: var(--green-d);
+      border: 1px solid rgba(15,173,0,.18);
+    }
+
+    .char-ng {
+      background: rgba(255,54,0,.08);
+      color: #a62700;
+      border: 1px solid rgba(255,54,0,.18);
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 760px) {
       .card { padding: 20px 16px; }
-      .form-row { grid-template-columns: 1fr; }
+      .form-row, .meta-grid { grid-template-columns: 1fr; }
       .difficulty-grid { grid-template-columns: 1fr; }
       header { padding: 14px 16px; }
       .steps { gap: 4px; }
       .step-label { display: none; }
+      .header-badge { display: none; }
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 12mm;
+    }
+
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+        min-height: auto;
+      }
+
+      header,
+      .steps,
+      #sec1,
+      #sec2,
+      .btn-row,
+      .loading,
+      .error-box,
+      .info-box,
+      .hint,
+      .tab-row {
+        display: none !important;
+      }
+
+      main {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .section {
+        display: none !important;
+      }
+
+      #sec3 {
+        display: block !important;
+      }
+
+      #sec3 .card {
+        box-shadow: none;
+        border: 1px solid #000;
+        padding: 12mm;
+        margin: 0;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .feedback-section,
+      .feedback-text,
+      .rationale-item,
+      .point-list li {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .score-ring {
+        border-color: #000 !important;
+        background: #fff !important;
+      }
+
+      .feedback-text,
+      .question-box,
+      .summary-task-box,
+      .rationale-item {
+        border-color: #000 !important;
+        background: #fff !important;
+      }
+
+      .grade-badge {
+        border: 1px solid #000;
+        background: #fff !important;
+        color: #000 !important;
+      }
     }
   </style>
 </head>
 <body>
 <header>
-  <div class="logo-mark">CS</div>
+  <div class="logo-mark">丸</div>
   <div class="logo-text">
-    <span class="en">Ciel Soir</span>
-    <span class="jp">要約採点システム</span>
+    <span class="jp-main">丸一塾 要約採点アプリ</span>
+    <span class="jp-sub">本文の要旨をとらえる要約問題専用システム</span>
   </div>
-  <div class="header-badge">Summary Only</div>
+  <div class="header-badge">SUMMARY SCORING</div>
 </header>
 
 <main>
@@ -720,16 +902,15 @@
 
       <div class="form-group">
         <label>追加指示（任意）</label>
-        <textarea id="extra" rows="2" placeholder="例：高校入試らしい論説文で / 具体例を1つ入れる / 抽象論と具体例を往復する構成にする"></textarea>
+        <textarea id="extra" rows="2" placeholder="例：高校入試らしい論説文で / 抽象論と具体例を往復する構成にする / 対比を明確にする"></textarea>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-primary" id="gen-btn" onclick="generateQuestion()">
-          ✦ 問題を生成する
-        </button>
+        <button class="btn btn-primary" id="gen-btn" onclick="generateQuestion()">✦ 問題を生成する</button>
       </div>
 
       <div class="error-box" id="gen-error"></div>
+      <div class="info-box hidden" id="gen-info"></div>
     </div>
 
     <div id="gen-loading" class="loading">
@@ -742,8 +923,20 @@
       <div class="question-meta" id="q-meta"></div>
       <div class="question-box" id="q-text"></div>
       <div class="summary-task-box" id="summary-task-box"></div>
+
+      <div class="meta-grid">
+        <div class="mini-box">
+          <h4>字数条件</h4>
+          <p id="length-info">—</p>
+        </div>
+        <div class="mini-box">
+          <h4>採点で重視する要点</h4>
+          <ul id="required-points-view"></ul>
+        </div>
+      </div>
+
       <div class="btn-row">
-        <button class="btn btn-gold" onclick="goToAnswer()">この問題で採点する →</button>
+        <button class="btn btn-accent" onclick="goToAnswer()">この問題で採点する →</button>
         <button class="btn btn-outline" onclick="generateQuestion()">再生成</button>
       </div>
     </div>
@@ -755,6 +948,7 @@
       <div class="question-meta" id="q-meta2"></div>
       <div class="question-box" id="q-text2" style="max-height:260px; overflow-y:auto;"></div>
       <div class="summary-task-box" id="summary-task-box2"></div>
+      <div class="char-box char-ok" id="char-rule-box"></div>
     </div>
 
     <div class="card">
@@ -769,7 +963,8 @@
         <div class="form-group">
           <label>生徒の要約</label>
           <textarea id="answer-text" rows="8" placeholder="ここに要約を入力してください…"></textarea>
-          <div class="hint">感想ではなく、本文の中心内容を簡潔にまとめてください。</div>
+          <div class="hint">感想ではなく、本文全体の中心内容を簡潔にまとめてください。</div>
+          <div class="char-box char-ok" id="text-char-status">文字数：0字</div>
         </div>
       </div>
 
@@ -781,22 +976,32 @@
           <div class="upload-text" style="margin-top:6px; font-size:11px;">JPG / PNG / GIF ・最大10MB</div>
         </div>
         <img id="preview-img" alt="プレビュー" />
-        <div class="hint" style="margin-top:8px;">手書き答案の写真でも採点できます。</div>
+        <div class="hint" style="margin-top:8px;">画像は先に文字起こしし、内容確認後に採点します。</div>
+
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="btn btn-subtle" id="ocr-btn" onclick="extractTextFromImage()">画像から文字を読み取る</button>
+        </div>
+
+        <div class="form-group" style="margin-top:14px;">
+          <label>読み取り結果（確認・修正してください）</label>
+          <textarea id="ocr-text" rows="8" placeholder="ここに画像から読み取った文字が入ります。必要なら修正してください。"></textarea>
+          <div class="hint">この欄の内容を採点します。画像をそのまま直接採点しません。</div>
+          <div class="char-box char-ok" id="ocr-char-status">文字数：0字</div>
+        </div>
       </div>
 
       <div class="form-group" style="margin-top:16px;">
         <label>採点基準の補足（任意）</label>
-        <textarea id="rubric" rows="2" placeholder="例：主張と理由の両方を入れること / 具体例を入れすぎないこと"></textarea>
+        <textarea id="rubric" rows="2" placeholder="例：主張と理由の両方を入れること / 具体例を書きすぎず要旨を優先すること"></textarea>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-primary" id="score-btn" onclick="scoreAnswer()">
-          ✦ 採点する
-        </button>
+        <button class="btn btn-primary" id="score-btn" onclick="scoreAnswer()">✦ 採点する</button>
         <button class="btn btn-outline" onclick="backToGen()">← 問題に戻る</button>
       </div>
 
       <div class="error-box" id="score-error"></div>
+      <div class="info-box hidden" id="score-info"></div>
     </div>
 
     <div id="score-loading" class="loading">
@@ -816,6 +1021,7 @@
         </div>
         <div class="score-label">総合得点</div>
         <div><span class="grade-badge" id="res-grade"></span></div>
+        <div class="char-box" id="res-char-box" style="margin-left:auto; margin-right:auto;"></div>
       </div>
 
       <hr class="divider" />
@@ -872,6 +1078,9 @@
     });
   });
 
+  document.getElementById('answer-text').addEventListener('input', updateTextCharStatus);
+  document.getElementById('ocr-text').addEventListener('input', updateOcrCharStatus);
+
   const uploadArea = document.getElementById('upload-area');
 
   ['dragover', 'dragleave', 'drop'].forEach(type => {
@@ -901,6 +1110,7 @@
     ev.currentTarget.classList.add('active');
     document.getElementById('tab-' + tab).classList.add('active');
     clearError('score-error');
+    hideInfo('score-info');
   }
 
   function setStep(active) {
@@ -924,19 +1134,25 @@
       case '小6・中1':
         return {
           passage: '本文は400～500字程度。',
-          summary: 'summary_task は30～40字程度の要約指示にする。',
+          minChars: 30,
+          maxChars: 40,
+          summaryText: 'summary_task は30～40字で、min_chars=30、max_chars=40 にする。',
           levelSpec: '難易度は小6・中1レベル。語彙は小学生高学年～中1が読める範囲を中心にし、主張は明確、具体例をやや多めにする。'
         };
       case '高校入試':
         return {
           passage: '本文は600～700字程度。',
-          summary: 'summary_task は50～65字程度の要約指示にする。',
+          minChars: 50,
+          maxChars: 65,
+          summaryText: 'summary_task は50～65字で、min_chars=50、max_chars=65 にする。',
           levelSpec: '難易度は高校入試レベル。中学生が読める語彙を中心に、主張と理由、具体例と一般論のつながりが追いやすい文章にする。'
         };
       default:
         return {
           passage: '本文は700～800字程度、800字以内厳守。',
-          summary: 'summary_task は60～75字以内の要約指示にし、模範要約も75字以内にする。',
+          minChars: 60,
+          maxChars: 75,
+          summaryText: 'summary_task は60～75字で、min_chars=60、max_chars=75 にする。',
           levelSpec: '難易度は大学入試レベル。抽象度を上げ、対比・反論処理・暗黙の前提を含み、本文全体を踏まえないと主張が取りにくい構成にする。'
         };
     }
@@ -952,61 +1168,33 @@
     }
 
     clearError('gen-error');
+    hideInfo('gen-info');
     setLoading('gen', true);
     document.getElementById('question-result').style.display = 'none';
     document.getElementById('gen-btn').disabled = true;
 
     const spec = getLengthSpec(selectedDiff);
 
-    const prompt = `あなたは国語の読解問題作成者です。次の条件で論説文1本と要約問題のみを作成し、出力はJSONのみとしてください。説明文、前置き、Markdownは禁止です。
-
-【条件】
-- テーマ：${theme}
-- 難易度：${selectedDiff}
-- ${spec.passage}
-- 本文は4段落。
-- 各段落は1回ずつ改行で区切る。
-- 空行なし。
-- 各段落冒頭は全角スペース1字。
-- 段落途中では改行しない。
-- 文体は入試現代文の論説文。
-- 会話文は避ける。
-- 抽象論だけで終わらず、必要に応じて日常・学校・社会の具体例を0～2個入れる。
-- 定型的な書き出しや無難な構成に寄せず、毎回別の切り口・具体例・結論で書く。
-- ${spec.levelSpec}
-- 構成は次のいずれかを自然に用いること：
-  1. 問題提起→理由→具体例→結論
-  2. 具体例→問題→一般論→結論
-  3. 一般論→反対意見→反論→結論
-  4. 身近な場面→抽象化→対比→結論
-- 4択問題は絶対に作らない。
-- 要約問題のみを付ける。
-- ${spec.summary}
-- model_summary は簡潔で自然な日本語にする。
-- rubric には採点観点を4個程度入れる。
-- summary_rationale は3～4個程度にする。
-
-${extra ? '【追加指示】\n- ' + extra : ''}
-
-【JSONキー】
-{
-  "passage":"本文",
-  "summary_task":"本文を◯字以内で要約せよ（感想禁止・丸写し禁止）",
-  "model_summary":"模範要約",
-  "rubric":["観点1","観点2","観点3","観点4"],
-  "summary_rationale":[
-    {"point":"要点1","quote":"引用1","reason":"説明1"},
-    {"point":"要点2","quote":"引用2","reason":"説明2"},
-    {"point":"要点3","quote":"引用3","reason":"説明3"}
-  ]
-}`;
+    const prompt = buildGeneratePrompt(theme, selectedDiff, spec, extra);
 
     try {
-      const resText = await callAPI(prompt);
-      const json = extractJSON(resText);
+      let json = null;
+      let lastError = '';
 
-      if (!json.passage || !json.summary_task || !json.model_summary) {
-        throw new Error('問題データが不足しています。');
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        const resText = await callAPI(prompt);
+        const candidate = extractJSON(resText);
+        try {
+          json = normalizeGeneratedQuestion(candidate, spec);
+          validateGeneratedQuestion(json, spec);
+          break;
+        } catch (err) {
+          lastError = `生成${attempt}回目: ${err.message}`;
+        }
+      }
+
+      if (!json) {
+        throw new Error(lastError || '問題生成後の検証に失敗しました。');
       }
 
       currentQuestion = json;
@@ -1017,12 +1205,157 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
       };
 
       renderQuestion('q-meta', 'q-text', 'summary-task-box', json, currentMeta);
+      renderQuestionMetaExtras(json);
       document.getElementById('question-result').style.display = 'block';
+
+      showInfo('gen-info', '問題を生成しました。模範要約の字数と内容の基本条件も確認済みです。');
     } catch (e) {
       showError('gen-error', '問題の生成に失敗しました。もう一度お試しください。\n' + e.message);
     } finally {
       setLoading('gen', false);
       document.getElementById('gen-btn').disabled = false;
+    }
+  }
+
+  function buildGeneratePrompt(theme, level, spec, extra) {
+    return `あなたは国語の要約問題作成者です。次の条件で論説文1本と要約問題のみを作成し、出力はJSONのみとしてください。説明文、前置き、Markdownは禁止です。
+
+【条件】
+- テーマ：${theme}
+- 難易度：${level}
+- ${spec.passage}
+- 本文は4段落。
+- 各段落は1回ずつ改行で区切る。
+- 空行なし。
+- 各段落冒頭は全角スペース1字。
+- 段落途中では改行しない。
+- 文体は入試現代文の論説文。
+- 会話文は避ける。
+- 抽象論だけで終わらず、必要に応じて日常・学校・社会の具体例を0～2個入れる。
+- ${spec.levelSpec}
+- 構成は次のいずれかを自然に用いること：
+  1. 問題提起→理由→具体例→結論
+  2. 具体例→問題→一般論→結論
+  3. 一般論→反対意見→反論→結論
+  4. 身近な場面→抽象化→対比→結論
+- 4択問題は絶対に作らない。
+- 要約問題のみを付ける。
+- ${spec.summaryText}
+- summary_task は「次の文章を○字以内で要約しなさい。」のような自然な日本語にする。
+- model_summary は必ず字数制限内に収める。
+- model_summary には具体例・たとえ話・細かなエピソードを入れず、本文の要旨だけを書く。
+- model_summary は感想・評価・余計な言い換えを入れない。
+- main_point は本文全体の中心主張を一文で簡潔に書く。
+- required_points は要約で最低限触れてほしい要点を2～4個に絞る。
+- rubric には採点観点を4～6個入れる。
+- rubric には必ず「具体例に寄りすぎず、本文の要旨をまとめているか」を含める。
+- summary_rationale は3～4個程度にする。
+- quote には本文中の根拠表現を入れるが、長すぎる引用は避ける。
+- JSONの各キーは必ず埋める。
+
+${extra ? '【追加指示】\n- ' + extra : ''}
+
+【JSONキー】
+{
+  "passage":"本文",
+  "summary_task":"次の文章を○字以内で要約しなさい。",
+  "min_chars": ${spec.minChars},
+  "max_chars": ${spec.maxChars},
+  "main_point":"本文全体の中心主張",
+  "required_points":["要点1","要点2","要点3"],
+  "model_summary":"模範要約",
+  "rubric":["観点1","観点2","観点3","観点4"],
+  "summary_rationale":[
+    {"point":"要点1","quote":"引用1","reason":"説明1"},
+    {"point":"要点2","quote":"引用2","reason":"説明2"},
+    {"point":"要点3","quote":"引用3","reason":"説明3"}
+  ]
+}`;
+  }
+
+  function normalizeGeneratedQuestion(json, spec) {
+    const out = { ...json };
+
+    out.min_chars = toSafeInt(out.min_chars, spec.minChars);
+    out.max_chars = toSafeInt(out.max_chars, spec.maxChars);
+
+    if (out.min_chars > out.max_chars) {
+      const tmp = out.min_chars;
+      out.min_chars = out.max_chars;
+      out.max_chars = tmp;
+    }
+
+    if (!Array.isArray(out.required_points)) out.required_points = [];
+    out.required_points = out.required_points
+      .map(v => String(v || '').trim())
+      .filter(Boolean)
+      .slice(0, 4);
+
+    if (!Array.isArray(out.rubric)) out.rubric = [];
+    out.rubric = out.rubric
+      .map(v => String(v || '').trim())
+      .filter(Boolean);
+
+    if (!out.rubric.some(v => v.includes('具体例') || v.includes('要旨'))) {
+      out.rubric.push('具体例に寄りすぎず、本文の要旨をまとめているか');
+    }
+
+    if (!Array.isArray(out.summary_rationale)) out.summary_rationale = [];
+    out.summary_rationale = out.summary_rationale
+      .filter(Boolean)
+      .map(item => ({
+        point: String(item.point || '').trim(),
+        quote: String(item.quote || '').trim(),
+        reason: String(item.reason || '').trim()
+      }))
+      .filter(item => item.point || item.quote || item.reason)
+      .slice(0, 4);
+
+    out.passage = normalizeTextBlock(out.passage);
+    out.summary_task = String(out.summary_task || '').trim();
+    out.model_summary = normalizeInlineText(out.model_summary);
+    out.main_point = normalizeInlineText(out.main_point);
+
+    return out;
+  }
+
+  function validateGeneratedQuestion(json, spec) {
+    if (!json.passage || !json.summary_task || !json.model_summary || !json.main_point) {
+      throw new Error('問題データが不足しています。');
+    }
+
+    if (!json.required_points || json.required_points.length < 2) {
+      throw new Error('required_points が不足しています。');
+    }
+
+    if (!json.summary_rationale || json.summary_rationale.length < 2) {
+      throw new Error('summary_rationale が不足しています。');
+    }
+
+    const modelLen = countCharsJP(json.model_summary);
+    if (modelLen < json.min_chars || modelLen > json.max_chars) {
+      throw new Error(`模範要約の字数が不正です（${modelLen}字 / 条件 ${json.min_chars}～${json.max_chars}字）。`);
+    }
+
+    const parsed = parseLengthFromTask(json.summary_task);
+    if (parsed.max !== null && parsed.max !== json.max_chars) {
+      throw new Error(`設問の字数条件と max_chars が一致しません（設問 ${parsed.max} / max_chars ${json.max_chars}）。`);
+    }
+
+    if (parsed.min !== null && parsed.min !== json.min_chars) {
+      throw new Error(`設問の字数条件と min_chars が一致しません（設問 ${parsed.min} / min_chars ${json.min_chars}）。`);
+    }
+
+    if (containsExampleLikeContent(json.model_summary)) {
+      throw new Error('模範要約に具体例らしき表現が含まれています。');
+    }
+
+    if (countParagraphs(json.passage) !== 4) {
+      throw new Error('本文が4段落になっていません。');
+    }
+
+    if (json.min_chars !== spec.minChars || json.max_chars !== spec.maxChars) {
+      throw new Error('難易度に対応する字数条件と一致していません。');
     }
   }
 
@@ -1036,17 +1369,76 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
     document.getElementById(taskId).textContent = '【要約】\n' + json.summary_task;
   }
 
+  function renderQuestionMetaExtras(json) {
+    document.getElementById('length-info').textContent = `${json.min_chars}～${json.max_chars}字`;
+    document.getElementById('required-points-view').innerHTML = (json.required_points || [])
+      .map(p => `<li>${escapeHtml(p)}</li>`)
+      .join('');
+    document.getElementById('char-rule-box').textContent = `字数条件：${json.min_chars}～${json.max_chars}字`;
+    updateTextCharStatus();
+    updateOcrCharStatus();
+  }
+
   function goToAnswer() {
     if (!currentQuestion || !currentQuestion.passage || !currentQuestion.summary_task) {
       showError('gen-error', '先に問題を生成してください。');
       return;
     }
     renderQuestion('q-meta2', 'q-text2', 'summary-task-box2', currentQuestion, currentMeta);
+    document.getElementById('char-rule-box').textContent = `字数条件：${currentQuestion.min_chars}～${currentQuestion.max_chars}字`;
     showSection(2);
   }
 
   function backToGen() {
     showSection(1);
+  }
+
+  async function extractTextFromImage() {
+    const imgFile = selectedImageFile || document.getElementById('answer-img').files[0];
+    if (!imgFile) {
+      showError('score-error', '先に画像をアップロードしてください。');
+      return;
+    }
+
+    clearError('score-error');
+    hideInfo('score-info');
+    setLoading('score', true);
+    document.getElementById('ocr-btn').disabled = true;
+
+    const prompt = `あなたは手書き答案の文字起こし担当です。画像内の日本語答案をできるだけ正確にテキスト化してください。
+出力はJSONのみです。
+
+【条件】
+- 採点はまだしない。
+- 画像中の答案だけを文字起こしする。
+- 読めない文字は「□」で残す。
+- 改行は適度に整えるが、意味を変えない。
+- 余計な説明は書かない。
+
+【出力JSON】
+{
+  "recognized_text":"ここに文字起こし結果"
+}`;
+
+    try {
+      const b64 = await fileToBase64(imgFile);
+      const resText = await callAPIWithImage(prompt, b64, imgFile.type);
+      const json = extractJSON(resText);
+      const recognized = String(json.recognized_text || '').trim();
+
+      if (!recognized) {
+        throw new Error('文字起こし結果が空でした。');
+      }
+
+      document.getElementById('ocr-text').value = recognized;
+      updateOcrCharStatus();
+      showInfo('score-info', '画像から文字を読み取りました。内容を確認・修正してから採点してください。');
+    } catch (e) {
+      showError('score-error', '画像の文字起こしに失敗しました。\n' + e.message);
+    } finally {
+      setLoading('score', false);
+      document.getElementById('ocr-btn').disabled = false;
+    }
   }
 
   async function scoreAnswer() {
@@ -1065,17 +1457,20 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
         return;
       }
     } else {
-      const imgFile = selectedImageFile || document.getElementById('answer-img').files[0];
-      if (!imgFile) {
-        showError('score-error', '要約画像をアップロードしてください。');
+      answerContent = document.getElementById('ocr-text').value.trim();
+      if (!answerContent) {
+        showError('score-error', '先に画像から文字を読み取るか、読み取り結果欄に答案を入力してください。');
         return;
       }
-      answerContent = '[画像解答]';
     }
 
     clearError('score-error');
+    hideInfo('score-info');
     setLoading('score', true);
     document.getElementById('score-btn').disabled = true;
+
+    const answerLen = countCharsJP(answerContent);
+    const lengthStatus = evaluateLength(answerLen, currentQuestion.min_chars, currentQuestion.max_chars);
 
     const prompt = `あなたは国語の要約問題の採点専門家です。以下の本文・設問・生徒答案を読み、要約として採点してください。出力はJSONのみです。
 
@@ -1085,11 +1480,23 @@ ${currentQuestion.passage}
 【要約問題】
 ${currentQuestion.summary_task}
 
+【字数条件】
+- 最低字数: ${currentQuestion.min_chars}
+- 最大字数: ${currentQuestion.max_chars}
+- 生徒答案字数: ${answerLen}
+- 字数条件判定: ${lengthStatus.ok ? '適合' : '不適合'}
+
+【本文全体の中心主張】
+${currentQuestion.main_point}
+
+【要約で最低限必要な要点】
+${(currentQuestion.required_points || []).map((p, i) => `${i + 1}. ${p}`).join('\n')}
+
 【模範要約】
 ${currentQuestion.model_summary}
 
 【採点観点】
-${Array.isArray(currentQuestion.rubric) ? currentQuestion.rubric.join(' / ') : '主張・理由・具体例・感想なし'}
+${Array.isArray(currentQuestion.rubric) ? currentQuestion.rubric.join(' / ') : '本文全体の要旨把握 / 主張と理由 / 具体例に寄りすぎない / 感想なし'}
 
 ${rubricText ? '【追加採点基準】\n' + rubricText + '\n' : ''}
 
@@ -1097,14 +1504,16 @@ ${rubricText ? '【追加採点基準】\n' + rubricText + '\n' : ''}
 ${answerContent}
 
 【採点方針】
-- 本文全体の中心内容をつかめているか
-- 主張と理由のつながりがあるか
-- 具体例を除いて書いているか
-- 重要な要点を落としすぎていないか
-- 細部に偏りすぎていないか
-- 感想や自分の意見を書いていないか
-- 日本語として簡潔で自然か
-- 字数制限の趣旨に沿っているか
+- 模範要約との表現一致ではなく、本文理解と要約の適切さを評価すること。
+- 本文全体の中心内容をつかめているかを重視する。
+- required_points をいくつ押さえているかを評価する。
+- 具体例の羅列ではなく、本文の要旨としてまとめているかを評価する。
+- 具体例だけを拾って中心主張が弱い場合は減点する。
+- 感想や自分の意見を書いている場合は減点する。
+- 日本語として簡潔で自然かを見る。
+- 字数条件に不適合なら、その事実を improve_points と comment に明記する。
+- model_answer_hint は currentQuestion.model_summary をそのまま返す。
+- summary_rationale は currentQuestion.summary_rationale をそのまま返す。
 
 【出力JSON】
 {
@@ -1112,29 +1521,20 @@ ${answerContent}
   "grade": "A",
   "comment": "総合コメント",
   "good_points": ["よかった点1","よかった点2"],
-  "improve_points": ["改善点1","改善点2"],
-  "model_answer_hint": "模範要約",
-  "summary_rationale":[
-    {"point":"要点1","quote":"引用1","reason":"説明1"},
-    {"point":"要点2","quote":"引用2","reason":"説明2"},
-    {"point":"要点3","quote":"引用3","reason":"説明3"}
-  ]
+  "improve_points": ["改善点1","改善点2","改善点3"],
+  "model_answer_hint": "${escapeForJson(currentQuestion.model_summary)}",
+  "summary_rationale": ${JSON.stringify(currentQuestion.summary_rationale || [], null, 2)},
+  "char_count": ${answerLen},
+  "char_ok": ${lengthStatus.ok ? 'true' : 'false'}
 }
 
 採点基準：S(90-100点)、A(80-89点)、B(70-79点)、C(60-69点)、D(59点以下)`;
 
     try {
-      let resText;
-
-      if (currentTab === 'photo') {
-        const imgFile = selectedImageFile || document.getElementById('answer-img').files[0];
-        const b64 = await fileToBase64(imgFile);
-        resText = await callAPIWithImage(prompt, b64, imgFile.type);
-      } else {
-        resText = await callAPI(prompt);
-      }
-
+      const resText = await callAPI(prompt);
       const json = extractJSON(resText);
+      json.char_count = Number.isFinite(Number(json.char_count)) ? Number(json.char_count) : answerLen;
+      json.char_ok = typeof json.char_ok === 'boolean' ? json.char_ok : lengthStatus.ok;
       renderResult(json);
       showSection(3);
     } catch (e) {
@@ -1179,6 +1579,12 @@ ${answerContent}
         <div class="rationale-reason">説明：${escapeHtml(item.reason || '')}</div>
       </li>
     `).join('');
+
+    const charCount = Number.isFinite(Number(json.char_count)) ? Number(json.char_count) : 0;
+    const charOk = !!json.char_ok;
+    const resCharBox = document.getElementById('res-char-box');
+    resCharBox.className = 'char-box ' + (charOk ? 'char-ok' : 'char-ng');
+    resCharBox.textContent = `答案字数：${charCount}字 / 条件 ${currentQuestion.min_chars}～${currentQuestion.max_chars}字`;
   }
 
   function scoreToGrade(s) {
@@ -1195,7 +1601,7 @@ ${answerContent}
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-opus-4-1',
-        max_tokens: 2500,
+        max_tokens: 2800,
         messages: [{
           role: 'user',
           content: prompt
@@ -1236,7 +1642,7 @@ ${answerContent}
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-opus-4-1',
-        max_tokens: 2500,
+        max_tokens: 2800,
         messages: [{
           role: 'user',
           content: [
@@ -1330,6 +1736,9 @@ ${answerContent}
     if (file) {
       selectedImageFile = file;
       loadImageFile(file);
+      document.getElementById('ocr-text').value = '';
+      updateOcrCharStatus();
+      hideInfo('score-info');
     }
   }
 
@@ -1359,9 +1768,22 @@ ${answerContent}
     el.classList.remove('show');
   }
 
+  function showInfo(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  }
+
+  function hideInfo(id) {
+    const el = document.getElementById(id);
+    el.textContent = '';
+    el.classList.add('hidden');
+  }
+
   function restart() {
     document.getElementById('answer-text').value = '';
     document.getElementById('answer-img').value = '';
+    document.getElementById('ocr-text').value = '';
     document.getElementById('preview-img').style.display = 'none';
     document.getElementById('preview-img').src = '';
     document.getElementById('rubric').value = '';
@@ -1381,6 +1803,11 @@ ${answerContent}
 
     clearError('gen-error');
     clearError('score-error');
+    hideInfo('gen-info');
+    hideInfo('score-info');
+
+    updateTextCharStatus();
+    updateOcrCharStatus();
 
     showSection(1);
   }
@@ -1396,6 +1823,113 @@ ${answerContent}
       .replaceAll('>', '&gt;')
       .replaceAll('"', '&quot;')
       .replaceAll("'", '&#39;');
+  }
+
+  function escapeForJson(str) {
+    return String(str)
+      .replaceAll('\\', '\\\\')
+      .replaceAll('"', '\\"')
+      .replaceAll('\n', '\\n');
+  }
+
+  function normalizeTextBlock(str) {
+    return String(str || '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
+
+  function normalizeInlineText(str) {
+    return String(str || '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function countParagraphs(text) {
+    return normalizeTextBlock(text).split('\n').filter(Boolean).length;
+  }
+
+  function countCharsJP(text) {
+    return [...String(text || '').replace(/\s+/g, '')].length;
+  }
+
+  function toSafeInt(value, fallback) {
+    const n = Number(value);
+    return Number.isFinite(n) ? Math.round(n) : fallback;
+  }
+
+  function parseLengthFromTask(task) {
+    const text = String(task || '');
+    const rangeMatch = text.match(/(\d+)\s*字(?:以上)?\s*[〜～\-]\s*(\d+)\s*字(?:以内)?/);
+    if (rangeMatch) {
+      return {
+        min: Number(rangeMatch[1]),
+        max: Number(rangeMatch[2])
+      };
+    }
+
+    const minMaxMatch = text.match(/(\d+)\s*字以上\s*(\d+)\s*字以内/);
+    if (minMaxMatch) {
+      return {
+        min: Number(minMaxMatch[1]),
+        max: Number(minMaxMatch[2])
+      };
+    }
+
+    const maxOnly = text.match(/(\d+)\s*字以内/);
+    if (maxOnly) {
+      return {
+        min: 0,
+        max: Number(maxOnly[1])
+      };
+    }
+
+    return { min: null, max: null };
+  }
+
+  function containsExampleLikeContent(text) {
+    const t = String(text || '');
+    const patterns = [
+      '例えば', 'たとえば', '例として', '具体的には',
+      '学校で', '教室で', 'ある生徒', 'ある人', 'たとえばポケモン',
+      '通信ケーブル', 'スマホ', 'SNS', 'ゲームボーイ'
+    ];
+    return patterns.some(p => t.includes(p));
+  }
+
+  function evaluateLength(len, min, max) {
+    return {
+      ok: len >= min && len <= max,
+      len,
+      min,
+      max
+    };
+  }
+
+  function updateTextCharStatus() {
+    const text = document.getElementById('answer-text').value.trim();
+    const len = countCharsJP(text);
+    const min = currentQuestion.min_chars ?? 0;
+    const max = currentQuestion.max_chars ?? 9999;
+    const ok = !currentQuestion.max_chars ? true : (len >= min && len <= max);
+    const el = document.getElementById('text-char-status');
+    el.className = 'char-box ' + (ok ? 'char-ok' : 'char-ng');
+    el.textContent = currentQuestion.max_chars
+      ? `文字数：${len}字 / 条件 ${min}～${max}字`
+      : `文字数：${len}字`;
+  }
+
+  function updateOcrCharStatus() {
+    const text = document.getElementById('ocr-text').value.trim();
+    const len = countCharsJP(text);
+    const min = currentQuestion.min_chars ?? 0;
+    const max = currentQuestion.max_chars ?? 9999;
+    const ok = !currentQuestion.max_chars ? true : (len >= min && len <= max);
+    const el = document.getElementById('ocr-char-status');
+    el.className = 'char-box ' + (ok ? 'char-ok' : 'char-ng');
+    el.textContent = currentQuestion.max_chars
+      ? `文字数：${len}字 / 条件 ${min}～${max}字`
+      : `文字数：${len}字`;
   }
 </script>
 </body>
