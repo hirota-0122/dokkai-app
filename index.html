@@ -1122,8 +1122,7 @@
       renderQuestion('q-meta', 'q-text', 'summary-task-box', json, currentMeta);
       renderModelCharBox();
       document.getElementById('question-result').style.display = 'block';
-
-      showInfo('gen-info', '問題を生成しました。難易度ごとの字数制限で模範要約と設問を調整しています。');
+      hideInfo('gen-info');
     } catch (e) {
       showError('gen-error', '問題の生成に失敗しました。もう一度お試しください。\n' + e.message);
     } finally {
