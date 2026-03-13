@@ -17,8 +17,6 @@
       --black: #111111;
       --white: #ffffff;
       --bg: #f8fbf7;
-      --bg-soft: #eef8eb;
-      --gray: #5f6b63;
       --border: #d7e6d2;
       --shadow: 0 6px 24px rgba(17,17,17,.08);
       --radius: 12px;
@@ -74,7 +72,7 @@
     }
 
     .logo-text .jp-sub {
-      color: var(--gray);
+      color: #5f6b63;
       font-size: 11px;
       letter-spacing: 1px;
     }
@@ -132,7 +130,7 @@
       font-size: 12px;
       font-weight: 700;
       border: 2px solid var(--border);
-      color: var(--gray);
+      color: #5f6b63;
       background: var(--white);
       flex-shrink: 0;
       transition: all .25s;
@@ -140,7 +138,7 @@
 
     .step-label {
       font-size: 12px;
-      color: var(--gray);
+      color: #5f6b63;
       white-space: nowrap;
       transition: color .25s;
       font-weight: 700;
@@ -194,7 +192,7 @@
     label {
       display: block;
       font-size: 12px;
-      color: var(--gray);
+      color: #5f6b63;
       letter-spacing: .5px;
       margin-bottom: 6px;
       font-weight: 700;
@@ -227,7 +225,7 @@
 
     .form-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 16px;
       margin-bottom: 16px;
     }
@@ -336,7 +334,7 @@
 
     .diff-btn .diff-icon { font-size: 18px; margin-bottom: 5px; }
     .diff-btn .diff-name { font-size: 12px; font-weight: 800; color: var(--black); }
-    .diff-btn .diff-grade { font-size: 10px; color: var(--gray); margin-top: 2px; }
+    .diff-btn .diff-grade { font-size: 10px; color: #5f6b63; margin-top: 2px; }
 
     .question-box {
       background: #fcfefc;
@@ -390,37 +388,6 @@
       white-space: pre-wrap;
     }
 
-    .meta-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .mini-box {
-      background: #fbfefb;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-    }
-
-    .mini-box h4 {
-      font-size: 12px;
-      margin-bottom: 6px;
-      color: var(--gray);
-      letter-spacing: .5px;
-    }
-
-    .mini-box p, .mini-box li {
-      font-size: 13px;
-      color: var(--black);
-      line-height: 1.7;
-    }
-
-    .mini-box ul {
-      margin-left: 18px;
-    }
-
     .upload-area {
       border: 2px dashed var(--border);
       border-radius: 10px;
@@ -447,7 +414,7 @@
     }
 
     .upload-icon { font-size: 34px; margin-bottom: 8px; }
-    .upload-text { font-size: 13px; color: var(--gray); }
+    .upload-text { font-size: 13px; color: #5f6b63; }
     .upload-text strong { color: var(--black); }
 
     #preview-img {
@@ -469,7 +436,7 @@
       padding: 10px 20px;
       font-size: 13px;
       cursor: pointer;
-      color: var(--gray);
+      color: #5f6b63;
       border-bottom: 3px solid transparent;
       margin-bottom: -2px;
       transition: all .2s;
@@ -508,7 +475,7 @@
 
     .loading-text {
       font-size: 13px;
-      color: var(--gray);
+      color: #5f6b63;
       letter-spacing: 1px;
       font-weight: 700;
     }
@@ -551,7 +518,7 @@
 
     .hint {
       font-size: 11px;
-      color: var(--gray);
+      color: #5f6b63;
       margin-top: 6px;
       letter-spacing: .2px;
     }
@@ -583,12 +550,12 @@
 
     .score-denom {
       font-size: 13px;
-      color: var(--gray);
+      color: #5f6b63;
     }
 
     .score-label {
       font-size: 13px;
-      color: var(--gray);
+      color: #5f6b63;
       letter-spacing: 1px;
       font-weight: 700;
     }
@@ -716,7 +683,7 @@
 
     @media (max-width: 760px) {
       .card { padding: 20px 16px; }
-      .form-row, .meta-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
       .difficulty-grid { grid-template-columns: 1fr; }
       header { padding: 14px 16px; }
       .steps { gap: 4px; }
@@ -872,11 +839,6 @@
             <option value="個別指導塾のメリットとデメリット">個別指導塾のメリットとデメリット</option>
           </select>
         </div>
-
-        <div class="form-group">
-          <label>形式</label>
-          <input type="text" value="要約問題のみ" disabled />
-        </div>
       </div>
 
       <div class="form-group">
@@ -923,17 +885,7 @@
       <div class="question-meta" id="q-meta"></div>
       <div class="question-box" id="q-text"></div>
       <div class="summary-task-box" id="summary-task-box"></div>
-
-      <div class="meta-grid">
-        <div class="mini-box">
-          <h4>字数条件</h4>
-          <p id="length-info">—</p>
-        </div>
-        <div class="mini-box">
-          <h4>採点で重視する要点</h4>
-          <ul id="required-points-view"></ul>
-        </div>
-      </div>
+      <div class="char-box char-ok" id="model-char-box" style="margin-top: 0;"></div>
 
       <div class="btn-row">
         <button class="btn btn-accent" onclick="goToAnswer()">この問題で採点する →</button>
@@ -948,7 +900,6 @@
       <div class="question-meta" id="q-meta2"></div>
       <div class="question-box" id="q-text2" style="max-height:260px; overflow-y:auto;"></div>
       <div class="summary-task-box" id="summary-task-box2"></div>
-      <div class="char-box char-ok" id="char-rule-box"></div>
     </div>
 
     <div class="card">
@@ -1134,28 +1085,28 @@
       case '小6・中1':
         return {
           passage: '本文は400～500字程度。',
-          minChars: 30,
-          maxChars: 40,
-          summaryText: 'summary_task は30～40字で、min_chars=30、max_chars=40 にする。',
           levelSpec: '難易度は小6・中1レベル。語彙は小学生高学年～中1が読める範囲を中心にし、主張は明確、具体例をやや多めにする。'
         };
       case '高校入試':
         return {
           passage: '本文は600～700字程度。',
-          minChars: 50,
-          maxChars: 65,
-          summaryText: 'summary_task は50～65字で、min_chars=50、max_chars=65 にする。',
           levelSpec: '難易度は高校入試レベル。中学生が読める語彙を中心に、主張と理由、具体例と一般論のつながりが追いやすい文章にする。'
         };
       default:
         return {
           passage: '本文は700～800字程度、800字以内厳守。',
-          minChars: 60,
-          maxChars: 75,
-          summaryText: 'summary_task は60～75字で、min_chars=60、max_chars=75 にする。',
           levelSpec: '難易度は大学入試レベル。抽象度を上げ、対比・反論処理・暗黙の前提を含み、本文全体を踏まえないと主張が取りにくい構成にする。'
         };
     }
+  }
+
+  function decideMaxCharsByModelLength(len) {
+    if (len <= 40) return 40;
+    if (len <= 50) return 50;
+    if (len <= 60) return 60;
+    if (len <= 70) return 70;
+    if (len <= 80) return 80;
+    return 90;
   }
 
   async function generateQuestion() {
@@ -1174,7 +1125,6 @@
     document.getElementById('gen-btn').disabled = true;
 
     const spec = getLengthSpec(selectedDiff);
-
     const prompt = buildGeneratePrompt(theme, selectedDiff, spec, extra);
 
     try {
@@ -1205,7 +1155,7 @@
       };
 
       renderQuestion('q-meta', 'q-text', 'summary-task-box', json, currentMeta);
-      renderQuestionMetaExtras(json);
+      renderModelCharBox();
       document.getElementById('question-result').style.display = 'block';
 
       showInfo('gen-info', '問題を生成しました。模範要約の字数と内容の基本条件も確認済みです。');
@@ -1238,13 +1188,12 @@
   2. 具体例→問題→一般論→結論
   3. 一般論→反対意見→反論→結論
   4. 身近な場面→抽象化→対比→結論
-- 4択問題は絶対に作らない。
 - 要約問題のみを付ける。
-- ${spec.summaryText}
-- summary_task は「次の文章を○字以内で要約しなさい。」のような自然な日本語にする。
-- model_summary は必ず字数制限内に収める。
+- 4択問題は絶対に作らない。
+- model_summary は自然な日本語で書く。
 - model_summary には具体例・たとえ話・細かなエピソードを入れず、本文の要旨だけを書く。
-- model_summary は感想・評価・余計な言い換えを入れない。
+- model_summary は短すぎず長すぎず、要旨がきちんと入る長さにする。
+- summary_task には最初は具体的な字数を書かなくてよい。こちらで後から調整する。
 - main_point は本文全体の中心主張を一文で簡潔に書く。
 - required_points は要約で最低限触れてほしい要点を2～4個に絞る。
 - rubric には採点観点を4～6個入れる。
@@ -1258,9 +1207,7 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
 【JSONキー】
 {
   "passage":"本文",
-  "summary_task":"次の文章を○字以内で要約しなさい。",
-  "min_chars": ${spec.minChars},
-  "max_chars": ${spec.maxChars},
+  "summary_task":"次の文章を要約しなさい。",
   "main_point":"本文全体の中心主張",
   "required_points":["要点1","要点2","要点3"],
   "model_summary":"模範要約",
@@ -1275,15 +1222,6 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
 
   function normalizeGeneratedQuestion(json, spec) {
     const out = { ...json };
-
-    out.min_chars = toSafeInt(out.min_chars, spec.minChars);
-    out.max_chars = toSafeInt(out.max_chars, spec.maxChars);
-
-    if (out.min_chars > out.max_chars) {
-      const tmp = out.min_chars;
-      out.min_chars = out.max_chars;
-      out.max_chars = tmp;
-    }
 
     if (!Array.isArray(out.required_points)) out.required_points = [];
     out.required_points = out.required_points
@@ -1316,6 +1254,11 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
     out.model_summary = normalizeInlineText(out.model_summary);
     out.main_point = normalizeInlineText(out.main_point);
 
+    const modelLen = countCharsJP(out.model_summary);
+    out.model_chars = modelLen;
+    out.max_chars = decideMaxCharsByModelLength(modelLen);
+    out.summary_task = `次の文章を${out.max_chars}字以内で要約しなさい。`;
+
     return out;
   }
 
@@ -1333,17 +1276,13 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
     }
 
     const modelLen = countCharsJP(json.model_summary);
-    if (modelLen < json.min_chars || modelLen > json.max_chars) {
-      throw new Error(`模範要約の字数が不正です（${modelLen}字 / 条件 ${json.min_chars}～${json.max_chars}字）。`);
+    if (modelLen > json.max_chars) {
+      throw new Error(`模範要約の字数が設問上限を超えています（${modelLen}字 / ${json.max_chars}字以内）。`);
     }
 
     const parsed = parseLengthFromTask(json.summary_task);
     if (parsed.max !== null && parsed.max !== json.max_chars) {
       throw new Error(`設問の字数条件と max_chars が一致しません（設問 ${parsed.max} / max_chars ${json.max_chars}）。`);
-    }
-
-    if (parsed.min !== null && parsed.min !== json.min_chars) {
-      throw new Error(`設問の字数条件と min_chars が一致しません（設問 ${parsed.min} / min_chars ${json.min_chars}）。`);
     }
 
     if (containsExampleLikeContent(json.model_summary)) {
@@ -1352,10 +1291,6 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
 
     if (countParagraphs(json.passage) !== 4) {
       throw new Error('本文が4段落になっていません。');
-    }
-
-    if (json.min_chars !== spec.minChars || json.max_chars !== spec.maxChars) {
-      throw new Error('難易度に対応する字数条件と一致していません。');
     }
   }
 
@@ -1369,14 +1304,13 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
     document.getElementById(taskId).textContent = '【要約】\n' + json.summary_task;
   }
 
-  function renderQuestionMetaExtras(json) {
-    document.getElementById('length-info').textContent = `${json.min_chars}～${json.max_chars}字`;
-    document.getElementById('required-points-view').innerHTML = (json.required_points || [])
-      .map(p => `<li>${escapeHtml(p)}</li>`)
-      .join('');
-    document.getElementById('char-rule-box').textContent = `字数条件：${json.min_chars}～${json.max_chars}字`;
-    updateTextCharStatus();
-    updateOcrCharStatus();
+  function renderModelCharBox() {
+    const len = currentQuestion.model_chars ?? countCharsJP(currentQuestion.model_summary || '');
+    const max = currentQuestion.max_chars ?? 0;
+    const el = document.getElementById('model-char-box');
+    const ok = len <= max;
+    el.className = 'char-box ' + (ok ? 'char-ok' : 'char-ng');
+    el.textContent = `模範要約：${len}字 / 設問 ${max}字以内`;
   }
 
   function goToAnswer() {
@@ -1385,7 +1319,8 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
       return;
     }
     renderQuestion('q-meta2', 'q-text2', 'summary-task-box2', currentQuestion, currentMeta);
-    document.getElementById('char-rule-box').textContent = `字数条件：${currentQuestion.min_chars}～${currentQuestion.max_chars}字`;
+    updateTextCharStatus();
+    updateOcrCharStatus();
     showSection(2);
   }
 
@@ -1470,7 +1405,11 @@ ${extra ? '【追加指示】\n- ' + extra : ''}
     document.getElementById('score-btn').disabled = true;
 
     const answerLen = countCharsJP(answerContent);
-    const lengthStatus = evaluateLength(answerLen, currentQuestion.min_chars, currentQuestion.max_chars);
+    const lengthStatus = {
+      ok: answerLen <= currentQuestion.max_chars,
+      len: answerLen,
+      max: currentQuestion.max_chars
+    };
 
     const prompt = `あなたは国語の要約問題の採点専門家です。以下の本文・設問・生徒答案を読み、要約として採点してください。出力はJSONのみです。
 
@@ -1481,8 +1420,7 @@ ${currentQuestion.passage}
 ${currentQuestion.summary_task}
 
 【字数条件】
-- 最低字数: ${currentQuestion.min_chars}
-- 最大字数: ${currentQuestion.max_chars}
+- 上限字数: ${currentQuestion.max_chars}
 - 生徒答案字数: ${answerLen}
 - 字数条件判定: ${lengthStatus.ok ? '適合' : '不適合'}
 
@@ -1584,7 +1522,7 @@ ${answerContent}
     const charOk = !!json.char_ok;
     const resCharBox = document.getElementById('res-char-box');
     resCharBox.className = 'char-box ' + (charOk ? 'char-ok' : 'char-ng');
-    resCharBox.textContent = `答案字数：${charCount}字 / 条件 ${currentQuestion.min_chars}～${currentQuestion.max_chars}字`;
+    resCharBox.textContent = `答案字数：${charCount}字 / 条件 ${currentQuestion.max_chars}字以内`;
   }
 
   function scoreToGrade(s) {
@@ -1853,33 +1791,13 @@ ${answerContent}
     return [...String(text || '').replace(/\s+/g, '')].length;
   }
 
-  function toSafeInt(value, fallback) {
-    const n = Number(value);
-    return Number.isFinite(n) ? Math.round(n) : fallback;
-  }
-
   function parseLengthFromTask(task) {
     const text = String(task || '');
-    const rangeMatch = text.match(/(\d+)\s*字(?:以上)?\s*[〜～\-]\s*(\d+)\s*字(?:以内)?/);
-    if (rangeMatch) {
-      return {
-        min: Number(rangeMatch[1]),
-        max: Number(rangeMatch[2])
-      };
-    }
-
-    const minMaxMatch = text.match(/(\d+)\s*字以上\s*(\d+)\s*字以内/);
-    if (minMaxMatch) {
-      return {
-        min: Number(minMaxMatch[1]),
-        max: Number(minMaxMatch[2])
-      };
-    }
 
     const maxOnly = text.match(/(\d+)\s*字以内/);
     if (maxOnly) {
       return {
-        min: 0,
+        min: null,
         max: Number(maxOnly[1])
       };
     }
@@ -1897,11 +1815,10 @@ ${answerContent}
     return patterns.some(p => t.includes(p));
   }
 
-  function evaluateLength(len, min, max) {
+  function evaluateLength(len, max) {
     return {
-      ok: len >= min && len <= max,
+      ok: len <= max,
       len,
-      min,
       max
     };
   }
@@ -1909,26 +1826,24 @@ ${answerContent}
   function updateTextCharStatus() {
     const text = document.getElementById('answer-text').value.trim();
     const len = countCharsJP(text);
-    const min = currentQuestion.min_chars ?? 0;
     const max = currentQuestion.max_chars ?? 9999;
-    const ok = !currentQuestion.max_chars ? true : (len >= min && len <= max);
+    const ok = !currentQuestion.max_chars ? true : (len <= max);
     const el = document.getElementById('text-char-status');
     el.className = 'char-box ' + (ok ? 'char-ok' : 'char-ng');
     el.textContent = currentQuestion.max_chars
-      ? `文字数：${len}字 / 条件 ${min}～${max}字`
+      ? `文字数：${len}字 / 条件 ${max}字以内`
       : `文字数：${len}字`;
   }
 
   function updateOcrCharStatus() {
     const text = document.getElementById('ocr-text').value.trim();
     const len = countCharsJP(text);
-    const min = currentQuestion.min_chars ?? 0;
     const max = currentQuestion.max_chars ?? 9999;
-    const ok = !currentQuestion.max_chars ? true : (len >= min && len <= max);
+    const ok = !currentQuestion.max_chars ? true : (len <= max);
     const el = document.getElementById('ocr-char-status');
     el.className = 'char-box ' + (ok ? 'char-ok' : 'char-ng');
     el.textContent = currentQuestion.max_chars
-      ? `文字数：${len}字 / 条件 ${min}～${max}字`
+      ? `文字数：${len}字 / 条件 ${max}字以内`
       : `文字数：${len}字`;
   }
 </script>
