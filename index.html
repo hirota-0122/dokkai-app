@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>要約採点アプリ｜丸一塾</title>
+  <title>要約生成・採点システム</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --green: #0fad00;
       --green-d: #0a8700;
@@ -18,1783 +16,1633 @@
       --white: #ffffff;
       --bg: #f8fbf7;
       --border: #d7e6d2;
-      --shadow: 0 6px 24px rgba(17,17,17,.08);
-      --radius: 12px;
+      --muted: #5f6b63;
+      --shadow: 0 10px 30px rgba(17,17,17,.08);
+      --radius: 14px;
       --font-jp: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
     }
 
+    * { box-sizing: border-box; }
     body {
+      margin: 0;
       font-family: var(--font-jp);
       background: var(--bg);
       color: var(--black);
-      min-height: 100vh;
       line-height: 1.7;
     }
 
     header {
-      background: var(--white);
-      border-bottom: 3px solid var(--green);
-      padding: 16px 28px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
       display: flex;
       align-items: center;
       gap: 14px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      padding: 16px 24px;
+      background: rgba(255,255,255,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 3px solid var(--green);
+      box-shadow: 0 2px 12px rgba(0,0,0,.05);
     }
 
-    .logo-mark {
-      width: 42px;
-      height: 42px;
+    .brand-mark {
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      background: var(--green);
-      color: var(--white);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
-      font-size: 18px;
+      background: var(--green);
+      color: var(--white);
+      font-weight: 900;
       flex-shrink: 0;
     }
 
-    .logo-text {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.2;
-    }
-
-    .logo-text .jp-main {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--black);
-      letter-spacing: 1px;
-    }
-
-    .logo-text .jp-sub {
-      color: #5f6b63;
-      font-size: 11px;
-      letter-spacing: 1px;
-    }
-
-    .header-badge {
+    .brand-copy { line-height: 1.2; }
+    .brand-main { font-size: 18px; font-weight: 800; letter-spacing: .5px; }
+    .brand-sub { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+    .header-status {
       margin-left: auto;
-      background: rgba(255, 54, 0, .08);
-      border: 1px solid rgba(255, 54, 0, .25);
-      color: var(--red);
-      padding: 5px 12px;
-      border-radius: 999px;
       font-size: 11px;
-      font-weight: 700;
+      color: var(--red);
+      border: 1px solid rgba(255,54,0,.2);
+      background: rgba(255,54,0,.08);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 800;
       letter-spacing: 1px;
     }
 
     main {
-      max-width: 980px;
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 32px 20px 60px;
+      padding: 28px 18px 60px;
     }
+
+    .hidden { display: none !important; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .hero {
+      padding: 32px 28px;
+      background: linear-gradient(135deg, rgba(15,173,0,.08), rgba(254,237,1,.10));
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      line-height: 1.35;
+    }
+
+    .hero p {
+      margin: 0 0 18px;
+      color: #39423d;
+      font-size: 15px;
+    }
+
+    .hero-points {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .mini-box {
+      background: rgba(255,255,255,.7);
+      border: 1px solid rgba(15,173,0,.14);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 16px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .card-title::before {
+      content: "";
+      width: 4px;
+      height: 18px;
+      border-radius: 999px;
+      background: var(--red);
+      display: inline-block;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted);
+      margin: 0 0 6px;
+      letter-spacing: .3px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="tel"],
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font: inherit;
+      color: var(--black);
+      background: #fbfefb;
+      outline: none;
+      transition: .2s;
+    }
+
+    textarea { min-height: 120px; resize: vertical; }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(15,173,0,.1);
+      background: var(--white);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-group { margin-bottom: 14px; }
+
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+
+    .btn {
+      appearance: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .4px;
+      transition: .18s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn:disabled { opacity: .56; cursor: not-allowed; transform: none; }
+    .btn-primary { background: var(--green); color: var(--white); }
+    .btn-primary:hover { background: var(--green-d); }
+    .btn-accent { background: var(--red); color: var(--white); }
+    .btn-accent:hover { background: var(--red-d); }
+    .btn-outline { background: transparent; color: var(--black); border: 1px solid var(--border); }
+    .btn-outline:hover { background: rgba(15,173,0,.04); border-color: var(--green); color: var(--green-d); }
+    .btn-subtle { background: rgba(254,237,1,.2); color: var(--black); border: 1px solid rgba(215,198,0,.35); }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .price-box {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      background: #fcfffc;
+    }
+
+    .price-name { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+    .price-amount { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+    .price-note { font-size: 12px; color: var(--muted); }
+
+    .info-box, .error-box {
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-top: 12px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      display: none;
+    }
+
+    .info-box.show {
+      display: block;
+      background: rgba(15,173,0,.08);
+      border: 1px solid rgba(15,173,0,.18);
+      color: var(--green-d);
+    }
+
+    .error-box.show {
+      display: block;
+      background: rgba(255,54,0,.08);
+      border: 1px solid rgba(255,54,0,.20);
+      color: #a62700;
+    }
+
+    .hint { font-size: 11px; color: var(--muted); margin-top: 6px; }
 
     .steps {
       display: flex;
       align-items: center;
-      margin-bottom: 32px;
-      gap: 0;
+      gap: 8px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
     }
 
     .step {
       display: flex;
       align-items: center;
       gap: 8px;
-      flex: 1;
-      position: relative;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
     }
-
-    .step::after {
-      content: '';
-      flex: 1;
-      height: 2px;
-      background: var(--border);
-      margin: 0 8px;
-    }
-
-    .step:last-child::after { display: none; }
 
     .step-num {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
       border: 2px solid var(--border);
-      color: #5f6b63;
       background: var(--white);
-      flex-shrink: 0;
-      transition: all .25s;
     }
 
-    .step-label {
-      font-size: 12px;
-      color: #5f6b63;
-      white-space: nowrap;
-      transition: color .25s;
-      font-weight: 700;
-    }
+    .step.active .step-num { background: var(--green); border-color: var(--green); color: #fff; }
+    .step.done .step-num { background: var(--yellow); border-color: var(--yellow-d); }
+    .step-arrow { color: #9ba79d; }
 
-    .step.active .step-num {
-      background: var(--green);
-      border-color: var(--green);
-      color: var(--white);
-    }
-
-    .step.active .step-label { color: var(--green-d); }
-
-    .step.done .step-num {
-      background: var(--yellow);
-      border-color: var(--yellow-d);
-      color: var(--black);
-    }
-
-    .step.done .step-label { color: var(--black); }
-
-    .card {
-      background: var(--white);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      padding: 28px 32px;
-      margin-bottom: 22px;
-    }
-
-    .card-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--black);
-      letter-spacing: .5px;
-      margin-bottom: 18px;
+    .app-topbar {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
     }
 
-    .card-title::before {
-      content: '';
-      display: block;
-      width: 4px;
-      height: 18px;
-      background: var(--red);
-      border-radius: 2px;
+    .school-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
-    label {
-      display: block;
-      font-size: 12px;
-      color: #5f6b63;
-      letter-spacing: .5px;
-      margin-bottom: 6px;
-      font-weight: 700;
-    }
-
-    select, textarea, input[type="text"] {
-      width: 100%;
+    .school-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 11px 14px;
-      font-family: var(--font-jp);
-      font-size: 14px;
-      color: var(--black);
-      background: #fbfefb;
-      outline: none;
-      transition: border-color .2s, background .2s, box-shadow .2s;
+      object-fit: cover;
+      background: #fff;
     }
 
-    select:focus, textarea:focus, input[type="text"]:focus {
-      border-color: var(--green);
-      background: var(--white);
-      box-shadow: 0 0 0 3px rgba(15, 173, 0, .08);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 120px;
-      line-height: 1.8;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .form-group { margin-bottom: 16px; }
-
-    .btn {
-      display: inline-flex;
+    .school-logo-fallback {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(15,173,0,.08);
+      color: var(--green-d);
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 12px 28px;
-      border-radius: 10px;
-      font-family: var(--font-jp);
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-      border: none;
-      transition: all .2s;
-      letter-spacing: .5px;
-      text-decoration: none;
+      font-weight: 900;
+      font-size: 20px;
     }
 
-    .btn-primary {
-      background: var(--green);
-      color: var(--white);
+    .school-name { font-size: 20px; font-weight: 900; }
+    .school-sub { font-size: 12px; color: var(--muted); }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(120px, 1fr));
+      gap: 10px;
+      width: min(100%, 540px);
     }
 
-    .btn-primary:hover {
-      background: var(--green-d);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(15, 173, 0, .25);
-    }
-
-    .btn-accent {
-      background: var(--red);
-      color: var(--white);
-    }
-
-    .btn-accent:hover {
-      background: var(--red-d);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(255, 54, 0, .22);
-    }
-
-    .btn-outline {
-      background: transparent;
+    .status-box {
+      background: var(--white);
       border: 1px solid var(--border);
-      color: var(--black);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: var(--shadow);
     }
 
-    .btn-outline:hover {
-      border-color: var(--green);
-      color: var(--green-d);
-      background: rgba(15,173,0,.03);
-    }
-
-    .btn-subtle {
-      background: rgba(254, 237, 1, .18);
-      color: var(--black);
-      border: 1px solid rgba(215, 198, 0, .35);
-    }
-
-    .btn-subtle:hover {
-      background: rgba(254, 237, 1, .28);
-    }
-
-    .btn:disabled {
-      opacity: .55;
-      cursor: not-allowed;
-      transform: none !important;
-      box-shadow: none !important;
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
+    .status-label { font-size: 11px; color: var(--muted); font-weight: 800; margin-bottom: 4px; }
+    .status-value { font-size: 18px; font-weight: 900; }
 
     .difficulty-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .diff-btn {
       border: 2px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 8px;
+      border-radius: 12px;
+      padding: 14px 10px;
       text-align: center;
-      cursor: pointer;
       background: #fbfefb;
-      transition: all .2s;
+      cursor: pointer;
+      transition: .2s;
     }
 
-    .diff-btn:hover { border-color: rgba(15,173,0,.4); }
+    .diff-btn.selected { border-color: var(--green); background: rgba(15,173,0,.06); }
+    .diff-btn .diff-name { font-size: 13px; font-weight: 900; }
+    .diff-btn .diff-grade { font-size: 11px; color: var(--muted); }
 
-    .diff-btn.selected {
-      border-color: var(--green);
-      background: rgba(15,173,0,.06);
-      box-shadow: inset 0 0 0 1px rgba(15,173,0,.06);
-    }
-
-    .diff-btn .diff-icon { font-size: 18px; margin-bottom: 5px; }
-    .diff-btn .diff-name { font-size: 12px; font-weight: 800; color: var(--black); }
-    .diff-btn .diff-grade { font-size: 10px; color: #5f6b63; margin-top: 2px; }
-
-    .question-box {
-      background: #fcfefc;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px;
-      line-height: 1.9;
-      font-size: 14px;
-      white-space: pre-wrap;
-      margin-bottom: 16px;
-    }
-
-    .question-meta {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
+    .question-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
     .tag {
-      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
       border-radius: 999px;
       font-size: 11px;
-      letter-spacing: .5px;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: .4px;
     }
+    .tag-theme { background: rgba(15,173,0,.1); color: var(--green-d); }
+    .tag-diff { background: rgba(254,237,1,.25); color: #706800; }
 
-    .tag-theme {
-      background: rgba(15,173,0,.1);
-      color: var(--green-d);
-    }
-
-    .tag-diff {
-      background: rgba(254,237,1,.25);
-      color: #6f6900;
+    .question-box, .summary-task-box, .feedback-text, .history-detail {
+      border: 1px solid var(--border);
+      background: #fcfefc;
+      border-radius: 12px;
+      padding: 16px;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .summary-task-box {
-      background: rgba(254,237,1,.12);
-      border: 1px solid rgba(215,198,0,.35);
-      border-radius: 10px;
-      padding: 14px 16px;
-      line-height: 1.8;
-      font-size: 14px;
-      margin-bottom: 14px;
-      white-space: pre-wrap;
-    }
-
-    .upload-area {
-      border: 2px dashed var(--border);
-      border-radius: 10px;
-      padding: 30px;
-      text-align: center;
-      cursor: pointer;
-      transition: all .2s;
-      position: relative;
-      background: #fcfefc;
-    }
-
-    .upload-area:hover, .upload-area.dragover {
-      border-color: var(--green);
-      background: rgba(15,173,0,.04);
-    }
-
-    .upload-area input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-    }
-
-    .upload-icon { font-size: 34px; margin-bottom: 8px; }
-    .upload-text { font-size: 13px; color: #5f6b63; }
-    .upload-text strong { color: var(--black); }
-
-    #preview-img {
-      max-width: 100%;
-      border-radius: 10px;
       margin-top: 12px;
-      border: 1px solid var(--border);
-      display: none;
+      background: rgba(254,237,1,.12);
+      border-color: rgba(215,198,0,.35);
     }
 
     .tab-row {
       display: flex;
       gap: 0;
       border-bottom: 2px solid var(--border);
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
-
     .tab {
-      padding: 10px 20px;
-      font-size: 13px;
+      padding: 10px 18px;
       cursor: pointer;
-      color: #5f6b63;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--muted);
       border-bottom: 3px solid transparent;
       margin-bottom: -2px;
-      transition: all .2s;
-      letter-spacing: .5px;
-      font-weight: 700;
     }
-
-    .tab.active {
-      color: var(--green-d);
-      border-bottom-color: var(--green);
-    }
-
+    .tab.active { color: var(--green-d); border-bottom-color: var(--green); }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    .loading {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px;
-      gap: 16px;
-    }
-
-    .loading.show { display: flex; }
-
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid var(--border);
-      border-top-color: var(--green);
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .loading-text {
-      font-size: 13px;
-      color: #5f6b63;
-      letter-spacing: 1px;
-      font-weight: 700;
-    }
-
-    .error-box {
-      background: rgba(255,54,0,.08);
-      border: 1px solid rgba(255,54,0,.22);
-      border-radius: 10px;
-      padding: 14px 16px;
-      font-size: 13px;
-      color: #a62700;
-      display: none;
-      margin-top: 12px;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .error-box.show { display: block; }
-
-    .info-box {
-      background: rgba(15,173,0,.06);
-      border: 1px solid rgba(15,173,0,.18);
-      border-radius: 10px;
-      padding: 14px 16px;
-      font-size: 13px;
-      color: var(--green-d);
-      margin-top: 12px;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .section { display: none; }
-    .section.active { display: block; }
-
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 20px 0;
-    }
-
-    .hint {
-      font-size: 11px;
-      color: #5f6b63;
-      margin-top: 6px;
-      letter-spacing: .2px;
-    }
-
-    .score-hero {
+    .upload-area {
+      position: relative;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 28px;
       text-align: center;
-      padding: 24px 0 16px;
+      background: #fcfefc;
+      transition: .2s;
+      cursor: pointer;
     }
-
-    .score-ring {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 112px;
-      height: 112px;
-      border-radius: 50%;
-      border: 5px solid var(--green);
-      flex-direction: column;
-      margin-bottom: 12px;
-      background: rgba(15,173,0,.04);
+    .upload-area.dragover, .upload-area:hover { border-color: var(--green); background: rgba(15,173,0,.05); }
+    .upload-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
     }
-
-    .score-num {
-      font-size: 34px;
-      font-weight: 800;
-      color: var(--black);
-      line-height: 1;
-    }
-
-    .score-denom {
-      font-size: 13px;
-      color: #5f6b63;
-    }
-
-    .score-label {
-      font-size: 13px;
-      color: #5f6b63;
-      letter-spacing: 1px;
-      font-weight: 700;
-    }
-
-    .grade-badge {
-      display: inline-block;
-      font-size: 20px;
-      font-weight: 800;
-      padding: 6px 20px;
-      border-radius: 24px;
-      margin-top: 8px;
-      letter-spacing: 2px;
-    }
-
-    .grade-S { background: rgba(254,237,1,.4); color: #5c5600; }
-    .grade-A { background: rgba(15,173,0,.12); color: var(--green-d); }
-    .grade-B { background: rgba(17,17,17,.07); color: #333; }
-    .grade-C { background: rgba(255,140,0,.12); color: #b16200; }
-    .grade-D { background: rgba(255,54,0,.12); color: #a62700; }
-
-    .feedback-section { margin-top: 20px; }
-
-    .feedback-heading {
-      font-size: 12px;
-      letter-spacing: 1px;
-      color: var(--red);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 800;
-    }
-
-    .feedback-heading::before {
-      content: '';
-      display: block;
-      width: 16px;
-      height: 2px;
-      background: var(--red);
-    }
-
-    .feedback-text {
-      font-size: 14px;
-      line-height: 1.9;
-      color: var(--black);
-      background: #fbfefb;
-      border-radius: 10px;
-      padding: 16px;
-      border-left: 4px solid var(--green);
-      white-space: pre-wrap;
-    }
-
-    .point-list {
-      list-style: none;
-      margin-top: 12px;
-    }
-
-    .point-list li {
-      font-size: 13px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      line-height: 1.7;
-    }
-
-    .point-list li.good { background: rgba(15,173,0,.08); color: var(--green-d); }
-    .point-list li.bad  { background: rgba(255,54,0,.08); color: #a62700; }
-    .point-list li .icon { flex-shrink: 0; font-weight: 800; }
+    #preview-img { max-width: 100%; margin-top: 12px; border-radius: 12px; display: none; border: 1px solid var(--border); }
 
     .char-box {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
       padding: 6px 10px;
       border-radius: 999px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
+      margin-top: 8px;
+      border: 1px solid transparent;
+    }
+    .char-ok { background: rgba(15,173,0,.08); border-color: rgba(15,173,0,.18); color: var(--green-d); }
+    .char-ng { background: rgba(255,54,0,.08); border-color: rgba(255,54,0,.18); color: #a62700; }
+
+    .loading { display: none; align-items: center; justify-content: center; flex-direction: column; gap: 12px; padding: 30px; }
+    .loading.show { display: flex; }
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 3px solid var(--border);
+      border-top-color: var(--green);
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .score-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 10px 0 6px;
+    }
+    .score-ring {
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      border: 5px solid var(--green);
+      background: rgba(15,173,0,.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .score-num { font-size: 34px; line-height: 1; font-weight: 900; }
+    .score-denom { font-size: 12px; color: var(--muted); }
+    .grade-badge {
+      display: inline-block;
+      padding: 6px 20px;
+      border-radius: 999px;
+      font-size: 20px;
+      font-weight: 900;
       margin-top: 8px;
     }
+    .grade-S { background: rgba(254,237,1,.4); color: #5f5700; }
+    .grade-A { background: rgba(15,173,0,.12); color: var(--green-d); }
+    .grade-B { background: rgba(17,17,17,.08); color: #333; }
+    .grade-C { background: rgba(255,170,0,.16); color: #a86100; }
+    .grade-D { background: rgba(255,54,0,.12); color: #a62700; }
 
-    .char-ok {
-      background: rgba(15,173,0,.08);
-      color: var(--green-d);
-      border: 1px solid rgba(15,173,0,.18);
+    .feedback-section { margin-top: 18px; }
+    .feedback-heading {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--red);
+      letter-spacing: .8px;
+      margin-bottom: 8px;
+    }
+    .feedback-heading::before {
+      content: "";
+      width: 16px;
+      height: 2px;
+      background: var(--red);
+      display: inline-block;
     }
 
-    .char-ng {
-      background: rgba(255,54,0,.08);
-      color: #a62700;
-      border: 1px solid rgba(255,54,0,.18);
+    .point-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
     }
+    .point-list li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .point-list li.good { background: rgba(15,173,0,.08); color: var(--green-d); }
+    .point-list li.bad { background: rgba(255,54,0,.08); color: #a62700; }
 
-    .hidden { display: none !important; }
+    .history-table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      font-size: 11px;
+      letter-spacing: .6px;
+      color: var(--muted);
+      font-weight: 900;
+    }
+    .history-row button { white-space: nowrap; }
+    .history-panel { margin-top: 14px; }
 
-    @media (max-width: 760px) {
-      .card { padding: 20px 16px; }
+    @media (max-width: 900px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .hero-points, .pricing-grid { grid-template-columns: 1fr 1fr; }
+      .status-strip { grid-template-columns: 1fr; width: 100%; }
       .form-row { grid-template-columns: 1fr; }
-      .difficulty-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
       header { padding: 14px 16px; }
-      .steps { gap: 4px; }
-      .step-label { display: none; }
-      .header-badge { display: none; }
-    }
-
-    @page {
-      size: A4 portrait;
-      margin: 12mm;
-    }
-
-    @media print {
-      body {
-        background: #fff !important;
-        color: #000 !important;
-        min-height: auto;
-      }
-
-      header,
-      .steps,
-      #sec1,
-      #sec2,
-      .btn-row,
-      .loading,
-      .error-box,
-      .info-box,
-      .hint,
-      .tab-row {
-        display: none !important;
-      }
-
-      main {
-        max-width: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      .section {
-        display: none !important;
-      }
-
-      #sec3 {
-        display: block !important;
-      }
-
-      #sec3 .card {
-        box-shadow: none;
-        border: 1px solid #000;
-        padding: 12mm;
-        margin: 0;
-        break-inside: avoid;
-        page-break-inside: avoid;
-      }
-
-      .feedback-section,
-      .feedback-text,
-      .point-list li {
-        break-inside: avoid;
-        page-break-inside: avoid;
-      }
-
-      .score-ring {
-        border-color: #000 !important;
-        background: #fff !important;
-      }
-
-      .feedback-text,
-      .question-box,
-      .summary-task-box {
-        border-color: #000 !important;
-        background: #fff !important;
-      }
-
-      .grade-badge {
-        border: 1px solid #000;
-        background: #fff !important;
-        color: #000 !important;
-      }
+      .brand-main { font-size: 15px; }
+      .header-status { display: none; }
+      .hero h1 { font-size: 24px; }
+      .hero-points, .pricing-grid, .difficulty-grid { grid-template-columns: 1fr; }
+      .card { padding: 18px 14px; }
+      .status-value { font-size: 16px; }
     }
   </style>
 </head>
 <body>
-<header>
-  <div class="logo-mark">丸</div>
-  <div class="logo-text">
-    <span class="jp-main">丸一塾 要約採点アプリ</span>
-    <span class="jp-sub">本文の要旨をとらえる要約問題専用システム</span>
-  </div>
-  <div class="header-badge">SUMMARY SCORING</div>
-</header>
-
-<main>
-  <div class="steps">
-    <div class="step active" id="step1">
-      <div class="step-num">1</div>
-      <span class="step-label">問題生成</span>
+  <header>
+    <div class="brand-mark">丸</div>
+    <div class="brand-copy">
+      <div class="brand-main">要約生成・採点システム</div>
+      <div class="brand-sub">丸一塾｜塾向け要約問題 Web アプリ</div>
     </div>
-    <div class="step" id="step2">
-      <div class="step-num">2</div>
-      <span class="step-label">要約入力</span>
-    </div>
-    <div class="step" id="step3">
-      <div class="step-num">3</div>
-      <span class="step-label">採点結果</span>
-    </div>
-  </div>
+    <div class="header-status">SCHOOL SaaS</div>
+  </header>
 
-  <div class="section active" id="sec1">
-    <div class="card">
-      <div class="card-title">問題の設定</div>
+  <main>
+    <section id="public-view">
+      <div class="grid-2">
+        <div>
+          <div class="card hero">
+            <h1>要約問題の生成と採点を、<br>1つの画面で。</h1>
+            <p>塾向けの要約専用システムです。問題生成・要約採点・履歴保存に対応。体験版申し込み後、発行されたIDとパスワードでご利用いただけます。</p>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="showTrialModal()">体験版を申し込む</button>
+              <button class="btn btn-outline" onclick="scrollToPricing()">料金を見る</button>
+            </div>
+            <div class="hero-points">
+              <div class="mini-box">小6・中1 / 高校入試 / 大学入試に対応</div>
+              <div class="mini-box">問題生成と採点は合算で回数管理</div>
+              <div class="mini-box">履歴閲覧・塾ロゴ表示に対応</div>
+            </div>
+          </div>
 
+          <div class="card" id="pricing-block">
+            <h2 class="card-title">料金プラン</h2>
+            <div class="pricing-grid">
+              <div class="price-box">
+                <div class="price-name">体験版</div>
+                <div class="price-amount">無料</div>
+                <div class="price-note">合計20回<br>先生発行IDで利用</div>
+              </div>
+              <div class="price-box">
+                <div class="price-name">200回プラン</div>
+                <div class="price-amount">年24,000円</div>
+                <div class="price-note">毎月1日に200回へリセット</div>
+              </div>
+              <div class="price-box">
+                <div class="price-name">500回プラン</div>
+                <div class="price-amount">年48,000円</div>
+                <div class="price-note">毎月1日に500回へリセット</div>
+              </div>
+              <div class="price-box">
+                <div class="price-name">1000回プラン</div>
+                <div class="price-amount">年72,000円</div>
+                <div class="price-note">毎月1日に1000回へリセット</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">塾長アンバサダープラン</h2>
+            <div class="history-detail">6か月無料提供・月100回まで利用可・XまたはInstagramで紹介投稿2回・PR表記あり・使用感の簡単な感想提出</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h2 class="card-title">ログイン</h2>
+            <div class="form-group">
+              <label for="login-id">ログインID</label>
+              <input id="login-id" type="text" placeholder="例：2026maruichi" />
+            </div>
+            <div class="form-group">
+              <label for="login-password">パスワード</label>
+              <input id="login-password" type="password" placeholder="英数字6文字" />
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="login-btn" onclick="login()">ログイン</button>
+            </div>
+            <div class="info-box" id="login-info"></div>
+            <div class="error-box" id="login-error"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="app-view" class="hidden">
+      <div class="app-topbar">
+        <div class="school-head">
+          <img id="school-logo" class="school-logo hidden" alt="塾ロゴ" />
+          <div id="school-logo-fallback" class="school-logo-fallback">塾</div>
+          <div>
+            <div id="school-name" class="school-name">塾名</div>
+            <div id="school-sub" class="school-sub">要約生成・採点システム</div>
+          </div>
+        </div>
+        <div class="status-strip">
+          <div class="status-box">
+            <div class="status-label">現在プラン</div>
+            <div id="plan-label" class="status-value">trial</div>
+          </div>
+          <div class="status-box">
+            <div class="status-label">今月残り回数</div>
+            <div id="remaining-label" class="status-value">0</div>
+          </div>
+          <div class="status-box">
+            <div class="status-label">契約終了日</div>
+            <div id="end-date-label" class="status-value">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row" style="justify-content:flex-end; margin-bottom:16px;">
+        <button class="btn btn-outline" onclick="refreshHistory()">履歴を更新</button>
+        <button class="btn btn-outline" onclick="logout()">ログアウト</button>
+      </div>
+
+      <div class="card">
+        <div class="steps">
+          <div id="step1" class="step active"><div class="step-num">1</div><div>問題生成</div></div>
+          <div class="step-arrow">→</div>
+          <div id="step2" class="step"><div class="step-num">2</div><div>要約入力</div></div>
+          <div class="step-arrow">→</div>
+          <div id="step3" class="step"><div class="step-num">3</div><div>採点結果</div></div>
+        </div>
+      </div>
+
+      <div id="sec1" class="section">
+        <div class="card">
+          <h2 class="card-title">問題の設定</h2>
+          <div class="form-group">
+            <label for="theme">テーマ</label>
+            <select id="theme"></select>
+          </div>
+
+          <div class="form-group">
+            <label>難易度</label>
+            <div class="difficulty-grid">
+              <div class="diff-btn selected" data-level="小6・中1">
+                <div class="diff-name">基礎</div>
+                <div class="diff-grade">小6・中1</div>
+              </div>
+              <div class="diff-btn" data-level="高校入試">
+                <div class="diff-name">標準</div>
+                <div class="diff-grade">高校入試</div>
+              </div>
+              <div class="diff-btn" data-level="大学入試">
+                <div class="diff-name">発展</div>
+                <div class="diff-grade">大学入試</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="extra">追加指示（任意）</label>
+            <textarea id="extra" rows="2" placeholder="例：高校入試らしい論説文で / 対比を明確にする / 抽象論と具体例を往復する構成にする"></textarea>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" id="gen-btn" onclick="generateQuestion()">✦ 問題を生成する</button>
+          </div>
+          <div class="info-box" id="gen-info"></div>
+          <div class="error-box" id="gen-error"></div>
+        </div>
+
+        <div class="loading" id="gen-loading">
+          <div class="spinner"></div>
+          <div>要約問題を生成しています…</div>
+        </div>
+
+        <div class="card hidden" id="question-result">
+          <h2 class="card-title">生成された問題</h2>
+          <div class="question-meta" id="q-meta"></div>
+          <div class="question-box" id="q-text"></div>
+          <div class="summary-task-box" id="summary-task-box"></div>
+          <div class="btn-row">
+            <button class="btn btn-accent" onclick="goToAnswer()">この問題で採点する →</button>
+            <button class="btn btn-outline" onclick="generateQuestion()">再生成</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="sec2" class="section hidden">
+        <div class="card">
+          <h2 class="card-title">問題の確認</h2>
+          <div class="question-meta" id="q-meta2"></div>
+          <div class="question-box" id="q-text2" style="max-height:260px; overflow-y:auto;"></div>
+          <div class="summary-task-box" id="summary-task-box2"></div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">要約の入力</h2>
+
+          <div class="form-group">
+            <label for="student-name">生徒名</label>
+            <input id="student-name" type="text" placeholder="未入力なら「名無し」で保存されます" />
+          </div>
+
+          <div class="tab-row">
+            <div class="tab active" onclick="switchTab(event, 'text')">✏️ テキスト入力</div>
+            <div class="tab" onclick="switchTab(event, 'photo')">📷 写真・画像</div>
+          </div>
+
+          <div class="tab-panel active" id="tab-text">
+            <div class="form-group">
+              <label for="answer-text">生徒の要約</label>
+              <textarea id="answer-text" rows="8" placeholder="ここに要約を入力してください…"></textarea>
+              <div class="hint">感想ではなく、本文全体の中心内容を簡潔にまとめてください。</div>
+              <div class="char-box char-ok" id="text-char-status">文字数：0字</div>
+            </div>
+          </div>
+
+          <div class="tab-panel" id="tab-photo">
+            <div class="upload-area" id="upload-area">
+              <input type="file" id="answer-img" accept="image/*" onchange="previewImage(event)" />
+              <div style="font-size:34px; margin-bottom:8px;">🖼️</div>
+              <div><strong>クリックまたはドラッグ</strong>で画像をアップロード</div>
+              <div class="hint">JPG / PNG / GIF ・最大10MB</div>
+            </div>
+            <img id="preview-img" alt="プレビュー" />
+
+            <div class="btn-row" style="margin-top:12px;">
+              <button class="btn btn-subtle" id="ocr-btn" onclick="extractTextFromImage()">画像から文字を読み取る</button>
+            </div>
+
+            <div class="form-group" style="margin-top:14px;">
+              <label for="ocr-text">読み取り結果（確認・修正してください）</label>
+              <textarea id="ocr-text" rows="8" placeholder="ここに画像から読み取った文字が入ります。必要なら修正してください。"></textarea>
+              <div class="hint">この欄の内容を採点します。画像をそのまま直接採点しません。</div>
+              <div class="char-box char-ok" id="ocr-char-status">文字数：0字</div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top:16px;">
+            <label for="rubric">採点基準の補足（任意）</label>
+            <textarea id="rubric" rows="2" placeholder="例：主張と理由の両方を入れること / 具体例を書きすぎず要旨を優先すること"></textarea>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" id="score-btn" onclick="scoreAnswer()">✦ 採点する</button>
+            <button class="btn btn-outline" onclick="backToGen()">← 問題に戻る</button>
+          </div>
+          <div class="info-box" id="score-info"></div>
+          <div class="error-box" id="score-error"></div>
+        </div>
+
+        <div class="loading" id="score-loading">
+          <div class="spinner"></div>
+          <div>採点・フィードバック生成中…</div>
+        </div>
+      </div>
+
+      <div id="sec3" class="section hidden">
+        <div class="card">
+          <h2 class="card-title">採点結果</h2>
+          <div class="score-hero">
+            <div class="score-ring">
+              <div class="score-num" id="res-score">-</div>
+              <div class="score-denom">/100</div>
+            </div>
+            <div>総合得点</div>
+            <div><span class="grade-badge" id="res-grade">-</span></div>
+            <div class="char-box char-ok" id="res-char-box"></div>
+          </div>
+
+          <div class="feedback-section">
+            <div class="feedback-heading">総合コメント</div>
+            <div class="feedback-text" id="res-comment"></div>
+          </div>
+
+          <div class="feedback-section">
+            <div class="feedback-heading">よかった点</div>
+            <ul class="point-list" id="res-good"></ul>
+          </div>
+
+          <div class="feedback-section">
+            <div class="feedback-heading">改善ポイント</div>
+            <ul class="point-list" id="res-bad"></ul>
+          </div>
+
+          <div class="feedback-section">
+            <div class="feedback-heading">模範要約</div>
+            <div class="feedback-text" id="res-model"></div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="scoreAnotherStudent()">同じ問題でもう1人採点する</button>
+            <button class="btn btn-outline" onclick="backToAnswer()">採点前の画面に戻る</button>
+            <button class="btn btn-outline" onclick="restart()">✦ 新しい問題を作る</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">履歴</h2>
+        <div class="history-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>日時</th>
+                <th>生徒名</th>
+                <th>テーマ</th>
+                <th>得点</th>
+                <th>詳細</th>
+              </tr>
+            </thead>
+            <tbody id="history-body"></tbody>
+          </table>
+        </div>
+        <div class="history-panel hidden" id="history-panel">
+          <div class="feedback-heading">履歴詳細</div>
+          <div class="history-detail" id="history-detail"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="trial-modal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:40; padding:20px; overflow:auto;">
+    <div style="max-width:640px; margin:40px auto;" class="card">
+      <h2 class="card-title">体験版申し込み</h2>
       <div class="form-row">
         <div class="form-group">
-          <label>テーマ</label>
-          <select id="theme">
-            <option value="">── テーマを選択 ──</option>
-            <option value="AIの進化と人間性の変容">AIの進化と人間性の変容</option>
-            <option value="情報化社会におけるプライバシーと監視">情報化社会におけるプライバシーと監視</option>
-            <option value="ネット空間とリアル空間の身体性">ネット空間とリアル空間の身体性</option>
-            <option value="身体の道具化と主体性">身体の道具化と主体性</option>
-            <option value="医療技術と生命観">医療技術と生命観</option>
-            <option value="感覚・感情と合理性">感覚・感情と合理性</option>
-            <option value="グローバリゼーションとナショナリズム">グローバリゼーションとナショナリズム</option>
-            <option value="個人の成立と現代社会での孤立">個人の成立と現代社会での孤立</option>
-            <option value="都市空間とコミュニケーションの変容">都市空間とコミュニケーションの変容</option>
-            <option value="多文化共生とアイデンティティ">多文化共生とアイデンティティ</option>
-            <option value="言語と表現">言語と表現</option>
-            <option value="芸術と感性">芸術と感性</option>
-            <option value="哲学と思想">哲学と思想</option>
-            <option value="近代合理主義の逆説">近代合理主義の逆説</option>
-            <option value="時間意識の変化">時間意識の変化</option>
-            <option value="学校教育の意義と教育論">学校教育の意義と教育論</option>
-            <option value="メディアリテラシー">メディアリテラシー</option>
-            <option value="自己と他者の境界">自己と他者の境界</option>
-            <option value="主語の巨大化">主語の巨大化</option>
-            <option value="効率主義への懐疑">効率主義への懐疑</option>
-            <option value="身体感覚の復権">身体感覚の復権</option>
-            <option value="フェミニズム">フェミニズム</option>
-            <option value="麻雀の教育的意義">麻雀の教育的意義</option>
-            <option value="ポケモンはなぜヒットしたか">ポケモンはなぜヒットしたか</option>
-            <option value="ポップカルチャーの変容">ポップカルチャーの変容</option>
-            <option value="レヴィストロースが残した負の遺産">レヴィストロースが残した負の遺産</option>
-            <option value="ごみの分別のデメリット">ごみの分別のデメリット</option>
-            <option value="キルケゴールの功績">キルケゴールの功績</option>
-            <option value="カントの純粋理性批判とは">カントの純粋理性批判とは</option>
-            <option value="カントの実践理性批判とは">カントの実践理性批判とは</option>
-            <option value="カントの限界">カントの限界</option>
-            <option value="ニーチェ">ニーチェ</option>
-            <option value="ソシュール">ソシュール</option>
-            <option value="個別指導塾のメリットとデメリット">個別指導塾のメリットとデメリット</option>
-          </select>
+          <label for="trial-school-name">塾名</label>
+          <input id="trial-school-name" type="text" />
         </div>
-      </div>
-
-      <div class="form-group">
-        <label>難易度</label>
-        <div class="difficulty-grid">
-          <div class="diff-btn selected" data-level="小6・中1">
-            <div class="diff-icon">🌱</div>
-            <div class="diff-name">基礎</div>
-            <div class="diff-grade">小6・中1</div>
-          </div>
-          <div class="diff-btn" data-level="高校入試">
-            <div class="diff-icon">📘</div>
-            <div class="diff-name">標準</div>
-            <div class="diff-grade">高校入試</div>
-          </div>
-          <div class="diff-btn" data-level="大学入試">
-            <div class="diff-icon">🏆</div>
-            <div class="diff-name">発展</div>
-            <div class="diff-grade">大学入試</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>追加指示（任意）</label>
-        <textarea id="extra" rows="2" placeholder="例：高校入試らしい論説文で / 抽象論と具体例を往復する構成にする / 対比を明確にする"></textarea>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-primary" id="gen-btn" onclick="generateQuestion()">✦ 問題を生成する</button>
-      </div>
-
-      <div class="error-box" id="gen-error"></div>
-      <div class="info-box hidden" id="gen-info"></div>
-    </div>
-
-    <div id="gen-loading" class="loading">
-      <div class="spinner"></div>
-      <div class="loading-text">要約問題を生成しています…</div>
-    </div>
-
-    <div class="card" id="question-result" style="display:none;">
-      <div class="card-title">生成された問題</div>
-      <div class="question-meta" id="q-meta"></div>
-      <div class="question-box" id="q-text"></div>
-      <div class="summary-task-box" id="summary-task-box"></div>
-      <div class="char-box char-ok" id="model-char-box" style="margin-top: 0;"></div>
-
-      <div class="btn-row">
-        <button class="btn btn-accent" onclick="goToAnswer()">この問題で採点する →</button>
-        <button class="btn btn-outline" onclick="generateQuestion()">再生成</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="section" id="sec2">
-    <div class="card">
-      <div class="card-title">問題の確認</div>
-      <div class="question-meta" id="q-meta2"></div>
-      <div class="question-box" id="q-text2" style="max-height:260px; overflow-y:auto;"></div>
-      <div class="summary-task-box" id="summary-task-box2"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">要約の入力</div>
-
-      <div class="tab-row">
-        <div class="tab active" onclick="switchTab(event, 'text')">✏️ テキスト入力</div>
-        <div class="tab" onclick="switchTab(event, 'photo')">📷 写真・画像</div>
-      </div>
-
-      <div class="tab-panel active" id="tab-text">
         <div class="form-group">
-          <label>生徒の要約</label>
-          <textarea id="answer-text" rows="8" placeholder="ここに要約を入力してください…"></textarea>
-          <div class="hint">感想ではなく、本文全体の中心内容を簡潔にまとめてください。</div>
-          <div class="char-box char-ok" id="text-char-status">文字数：0字</div>
+          <label for="trial-contact-name">担当者名</label>
+          <input id="trial-contact-name" type="text" />
         </div>
       </div>
-
-      <div class="tab-panel" id="tab-photo">
-        <div class="upload-area" id="upload-area">
-          <input type="file" id="answer-img" accept="image/*" onchange="previewImage(event)" />
-          <div class="upload-icon">🖼️</div>
-          <div class="upload-text"><strong>クリックまたはドラッグ</strong>で画像をアップロード</div>
-          <div class="upload-text" style="margin-top:6px; font-size:11px;">JPG / PNG / GIF ・最大10MB</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="trial-email">メールアドレス</label>
+          <input id="trial-email" type="email" />
         </div>
-        <img id="preview-img" alt="プレビュー" />
-        <div class="hint" style="margin-top:8px;">画像は先に文字起こしし、内容確認後に採点します。</div>
-
-        <div class="btn-row" style="margin-top:12px;">
-          <button class="btn btn-subtle" id="ocr-btn" onclick="extractTextFromImage()">画像から文字を読み取る</button>
-        </div>
-
-        <div class="form-group" style="margin-top:14px;">
-          <label>読み取り結果（確認・修正してください）</label>
-          <textarea id="ocr-text" rows="8" placeholder="ここに画像から読み取った文字が入ります。必要なら修正してください。"></textarea>
-          <div class="hint">この欄の内容を採点します。画像をそのまま直接採点しません。</div>
-          <div class="char-box char-ok" id="ocr-char-status">文字数：0字</div>
+        <div class="form-group">
+          <label for="trial-phone">電話番号</label>
+          <input id="trial-phone" type="tel" />
         </div>
       </div>
-
-      <div class="form-group" style="margin-top:16px;">
-        <label>採点基準の補足（任意）</label>
-        <textarea id="rubric" rows="2" placeholder="例：主張と理由の両方を入れること / 具体例を書きすぎず要旨を優先すること"></textarea>
-      </div>
-
       <div class="btn-row">
-        <button class="btn btn-primary" id="score-btn" onclick="scoreAnswer()">✦ 採点する</button>
-        <button class="btn btn-outline" onclick="backToGen()">← 問題に戻る</button>
+        <button class="btn btn-primary" onclick="submitTrialRequest()">申し込む</button>
+        <button class="btn btn-outline" onclick="hideTrialModal()">閉じる</button>
       </div>
-
-      <div class="error-box" id="score-error"></div>
-      <div class="info-box hidden" id="score-info"></div>
-    </div>
-
-    <div id="score-loading" class="loading">
-      <div class="spinner"></div>
-      <div class="loading-text">採点・フィードバック生成中…</div>
+      <div class="info-box" id="trial-info"></div>
+      <div class="error-box" id="trial-error"></div>
     </div>
   </div>
 
-  <div class="section" id="sec3">
-    <div class="card">
-      <div class="card-title">採点結果</div>
+  <script>
+    const API_BASE = window.API_BASE || '';
 
-      <div class="score-hero">
-        <div class="score-ring">
-          <div class="score-num" id="res-score">—</div>
-          <div class="score-denom">/100</div>
-        </div>
-        <div class="score-label">総合得点</div>
-        <div><span class="grade-badge" id="res-grade"></span></div>
-        <div class="char-box" id="res-char-box" style="margin-left:auto; margin-right:auto;"></div>
-      </div>
+    const THEMES = [
+      'AIの進化と人間性の変容', '情報化社会におけるプライバシーと監視', 'ネット空間とリアル空間の身体性',
+      '身体の道具化と主体性', '医療技術と生命観', '感覚・感情と合理性',
+      'グローバリゼーションとナショナリズム', '個人の成立と現代社会での孤立', '都市空間とコミュニケーションの変容',
+      '多文化共生とアイデンティティ', '言語と表現', '芸術と感性',
+      '哲学と思想', '近代合理主義の逆説', '時間意識の変化',
+      '学校教育の意義と教育論', 'メディアリテラシー', '自己と他者の境界',
+      '主語の巨大化', '効率主義への懐疑', '身体感覚の復権',
+      'フェミニズム', '麻雀の教育的意義', 'ポケモンはなぜヒットしたか',
+      'ポップカルチャーの変容', 'レヴィストロースが残した負の遺産', 'ごみの分別のデメリット',
+      'キルケゴールの功績', 'カントの純粋理性批判とは', 'カントの実践理性批判とは',
+      'カントの限界', 'ニーチェ', 'ソシュール', '個別指導塾のメリットとデメリット'
+    ];
 
-      <hr class="divider" />
+    let currentQuestion = {};
+    let currentMeta = {};
+    let currentTab = 'text';
+    let selectedDiff = '小6・中1';
+    let selectedImageFile = null;
+    let currentUser = null;
 
-      <div class="feedback-section">
-        <div class="feedback-heading">総合コメント</div>
-        <div class="feedback-text" id="res-comment"></div>
-      </div>
-
-      <div class="feedback-section">
-        <div class="feedback-heading">よかった点</div>
-        <ul class="point-list" id="res-good"></ul>
-      </div>
-
-      <div class="feedback-section">
-        <div class="feedback-heading">改善ポイント</div>
-        <ul class="point-list" id="res-bad"></ul>
-      </div>
-
-      <div class="feedback-section">
-        <div class="feedback-heading">模範要約</div>
-        <div class="feedback-text" id="res-model"></div>
-      </div>
-
-      <hr class="divider" />
-
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="scoreAnotherStudent()">同じ問題でもう1人採点する</button>
-        <button class="btn btn-outline" onclick="backToAnswer()">採点前の画面に戻る</button>
-        <button class="btn btn-outline" onclick="restart()">✦ 新しい問題を作る</button>
-        <button class="btn btn-outline" onclick="printResult()">🖨️ 印刷する</button>
-      </div>
-    </div>
-  </div>
-</main>
-
-<script>
-  const API_URL = 'https://dokkai-api.r-hirota0122.workers.dev';
-
-  let currentQuestion = {};
-  let currentMeta = {};
-  let currentTab = 'text';
-  let selectedDiff = '小6・中1';
-  let selectedImageFile = null;
-
-  document.querySelectorAll('.diff-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      selectedDiff = btn.dataset.level;
-    });
-  });
-
-  document.getElementById('answer-text').addEventListener('input', updateTextCharStatus);
-  document.getElementById('ocr-text').addEventListener('input', updateOcrCharStatus);
-
-  const uploadArea = document.getElementById('upload-area');
-
-  ['dragover', 'dragleave', 'drop'].forEach(type => {
-    uploadArea.addEventListener(type, ev => {
-      ev.preventDefault();
-
-      if (type === 'dragover') {
-        uploadArea.classList.add('dragover');
-      } else {
-        uploadArea.classList.remove('dragover');
-      }
-
-      if (type === 'drop') {
-        const file = ev.dataTransfer && ev.dataTransfer.files ? ev.dataTransfer.files[0] : null;
-        if (file) {
-          selectedImageFile = file;
-          loadImageFile(file);
-        }
-      }
-    });
-  });
-
-  function switchTab(ev, tab) {
-    currentTab = tab;
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    ev.currentTarget.classList.add('active');
-    document.getElementById('tab-' + tab).classList.add('active');
-    clearError('score-error');
-    hideInfo('score-info');
-  }
-
-  function setStep(active) {
-    for (let i = 1; i <= 3; i++) {
-      const el = document.getElementById('step' + i);
-      el.classList.remove('active', 'done');
-      if (i < active) el.classList.add('done');
-      if (i === active) el.classList.add('active');
-    }
-  }
-
-  function showSection(n) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById('sec' + n).classList.add('active');
-    setStep(n);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function getLengthSpec(level) {
-    switch (level) {
-      case '小6・中1':
-        return {
-          passage: '本文は400～500字程度。',
-          levelSpec: '難易度は小6・中1レベル。語彙は小学生高学年～中1が読める範囲を中心にし、主張は明確、具体例をやや多めにする。'
-        };
-      case '高校入試':
-        return {
-          passage: '本文は600～700字程度。',
-          levelSpec: '難易度は高校入試レベル。中学生が読める語彙を中心に、主張と理由、具体例と一般論のつながりが追いやすい文章にする。'
-        };
-      default:
-        return {
-          passage: '本文は700～800字程度、800字以内厳守。',
-          levelSpec: '難易度は大学入試レベル。抽象度を上げ、対比・反論処理・暗黙の前提を含み、本文全体を踏まえないと主張が取りにくい構成にする。'
-        };
-    }
-  }
-
-  function decideMaxCharsByLevel(level) {
-    if (level === '小6・中1') return 30;
-    if (level === '高校入試') return 50;
-    return 70;
-  }
-
-  function getModelSummaryLimitText(level) {
-    if (level === '小6・中1') return 'model_summary は日本語30字程度、30字以内を目安に簡潔にまとめる。';
-    if (level === '高校入試') return 'model_summary は日本語50字程度、50字以内を目安に簡潔にまとめる。';
-    return 'model_summary は日本語70字以内でまとめる。';
-  }
-
-  async function generateQuestion() {
-    const theme = document.getElementById('theme').value;
-    const extra = document.getElementById('extra').value.trim();
-
-    if (!theme) {
-      showError('gen-error', 'テーマを選択してください。');
-      return;
-    }
-
-    clearError('gen-error');
-    hideInfo('gen-info');
-    setLoading('gen', true);
-    document.getElementById('question-result').style.display = 'none';
-    document.getElementById('gen-btn').disabled = true;
-
-    const spec = getLengthSpec(selectedDiff);
-
-    try {
-      let json = null;
-      let lastError = '';
-
-      for (let attempt = 1; attempt <= 5; attempt++) {
-        const prompt = buildGeneratePrompt(theme, selectedDiff, spec, extra, attempt);
-        const resText = await callAPI(prompt);
-        const candidate = extractJSON(resText);
-
-        try {
-          json = normalizeGeneratedQuestion(candidate, selectedDiff);
-          validateGeneratedQuestion(json, selectedDiff);
-          break;
-        } catch (err) {
-          lastError = `生成${attempt}回目: ${err.message}`;
-        }
-      }
-
-      if (!json) {
-        throw new Error(lastError || '問題生成後の検証に失敗しました。');
-      }
-
-      currentQuestion = json;
-      currentMeta = {
-        theme,
-        diff: selectedDiff
-      };
-
-      renderQuestion('q-meta', 'q-text', 'summary-task-box', json, currentMeta);
-      renderModelCharBox();
-      document.getElementById('question-result').style.display = 'block';
-      hideInfo('gen-info');
-    } catch (e) {
-      showError('gen-error', '問題の生成に失敗しました。もう一度お試しください。\n' + e.message);
-    } finally {
-      setLoading('gen', false);
-      document.getElementById('gen-btn').disabled = false;
-    }
-  }
-
-  function buildGeneratePrompt(theme, level, spec, extra, attempt = 1) {
-    const strictNote = attempt > 1
-      ? `
-- 前回は条件違反がありました。今回は特に model_summary の字数を厳守する。
-- 指定された字数上限を1字でも超えてはいけない。`
-      : '';
-
-    return `あなたは国語の要約問題作成者です。次の条件で論説文1本と要約問題を作成し、出力はJSONのみとしてください。説明文、前置き、Markdownは禁止です。
-
-【条件】
-- テーマ：${theme}
-- 難易度：${level}
-- ${spec.passage}
-- 本文は4段落。
-- 各段落は1回ずつ改行で区切る。
-- 空行なし。
-- 各段落冒頭は全角スペース1字。
-- 段落途中では改行しない。
-- 文体は入試現代文の論説文。
-- 会話文は避ける。
-- 抽象論だけで終わらず、必要に応じて日常・学校・社会の具体例を0～2個入れる。
-- ${spec.levelSpec}
-- 4択問題は絶対に作らない。
-- model_summary は自然な日本語で書く。
-- model_summary には具体例・たとえ話・細かなエピソードを入れず、本文の要旨だけを書く。
-- ${getModelSummaryLimitText(level)}
-- summary_task には最初は具体的な字数を書かなくてよい。こちらで後から調整する。
-- main_point は本文全体の中心主張を一文で簡潔に書く。
-- required_points は要約で最低限触れてほしい要点を2～4個に絞る。
-- rubric には採点観点を3～5個入れる。
-- rubric には必ず「具体例に寄りすぎず、本文の要旨をまとめているか」を含める。
-- JSONの各キーは必ず埋める。${strictNote}
-
-${extra ? '【追加指示】\n- ' + extra : ''}
-
-【JSONキー】
-{
-  "passage":"本文",
-  "summary_task":"次の文章を要約しなさい。",
-  "main_point":"本文全体の中心主張",
-  "required_points":["要点1","要点2","要点3"],
-  "model_summary":"模範要約",
-  "rubric":["観点1","観点2","観点3","観点4"]
-}`;
-  }
-
-  function normalizeGeneratedQuestion(json, level) {
-    const out = { ...json };
-
-    if (!Array.isArray(out.required_points)) out.required_points = [];
-    out.required_points = out.required_points
-      .map(v => String(v || '').trim())
-      .filter(Boolean)
-      .slice(0, 4);
-
-    if (!Array.isArray(out.rubric)) out.rubric = [];
-    out.rubric = out.rubric
-      .map(v => String(v || '').trim())
-      .filter(Boolean)
-      .slice(0, 5);
-
-    if (!out.rubric.some(v => v.includes('具体例') || v.includes('要旨'))) {
-      out.rubric.push('具体例に寄りすぎず、本文の要旨をまとめているか');
-    }
-
-    out.passage = normalizeTextBlock(out.passage);
-    out.summary_task = String(out.summary_task || '').trim();
-    out.model_summary = normalizeInlineText(out.model_summary);
-    out.main_point = normalizeInlineText(out.main_point);
-
-    const modelLen = countCharsJP(out.model_summary);
-    out.model_chars = modelLen;
-    out.max_chars = decideMaxCharsByLevel(level);
-    out.summary_task = `次の文章を${out.max_chars}字以内で要約しなさい。`;
-
-    return out;
-  }
-
-  function validateGeneratedQuestion(json, level) {
-    if (!json.passage || !json.summary_task || !json.model_summary || !json.main_point) {
-      throw new Error('問題データが不足しています。');
-    }
-
-    if (!json.required_points || json.required_points.length < 2) {
-      throw new Error('required_points が不足しています。');
-    }
-
-    const modelLen = countCharsJP(json.model_summary);
-    const max = decideMaxCharsByLevel(level);
-
-    if (modelLen > max) {
-      throw new Error(`模範要約が長すぎます（${modelLen}字）。${max}字以内にしてください。`);
-    }
-
-    const parsed = parseLengthFromTask(json.summary_task);
-    if (parsed.max !== null && parsed.max !== max) {
-      throw new Error(`設問の字数条件が一致しません（設問 ${parsed.max} / 想定 ${max}）。`);
-    }
-
-    if (containsExampleLikeContent(json.model_summary)) {
-      throw new Error('模範要約に具体例らしき表現が含まれています。');
-    }
-
-    if (countParagraphs(json.passage) !== 4) {
-      throw new Error('本文が4段落になっていません。');
-    }
-  }
-
-  function renderQuestion(metaId, textId, taskId, json, meta) {
-    document.getElementById(metaId).innerHTML =
-      `<span class="tag tag-theme">${escapeHtml(meta.theme)}</span>
-       <span class="tag tag-diff">${escapeHtml(meta.diff)}</span>`;
-
-    document.getElementById(textId).textContent = json.passage;
-    document.getElementById(taskId).textContent = '【要約】\n' + json.summary_task;
-  }
-
-  function renderModelCharBox() {
-    const len = currentQuestion.model_chars ?? countCharsJP(currentQuestion.model_summary || '');
-    const max = currentQuestion.max_chars ?? 0;
-    const el = document.getElementById('model-char-box');
-    const ok = len <= max;
-    el.className = 'char-box ' + (ok ? 'char-ok' : 'char-ng');
-    el.textContent = `模範要約：${len}字 / 上限 ${max}字以内`;
-  }
-
-  function goToAnswer() {
-    if (!currentQuestion || !currentQuestion.passage || !currentQuestion.summary_task) {
-      showError('gen-error', '先に問題を生成してください。');
-      return;
-    }
-    renderQuestion('q-meta2', 'q-text2', 'summary-task-box2', currentQuestion, currentMeta);
-    updateTextCharStatus();
-    updateOcrCharStatus();
-    showSection(2);
-  }
-
-  function backToGen() {
-    showSection(1);
-  }
-
-  function backToAnswer() {
-    showSection(2);
-  }
-
-  function scoreAnotherStudent() {
-    document.getElementById('answer-text').value = '';
-    document.getElementById('answer-img').value = '';
-    document.getElementById('ocr-text').value = '';
-    document.getElementById('preview-img').style.display = 'none';
-    document.getElementById('preview-img').src = '';
-    selectedImageFile = null;
-    currentTab = 'text';
-
-    document.querySelectorAll('.tab').forEach((tab, idx) => {
-      tab.classList.toggle('active', idx === 0);
-    });
-    document.querySelectorAll('.tab-panel').forEach((panel, idx) => {
-      panel.classList.toggle('active', idx === 0);
+    document.addEventListener('DOMContentLoaded', async () => {
+      populateThemes();
+      setupDifficultyButtons();
+      setupCharCounters();
+      setupUploadEvents();
+      await restoreSession();
     });
 
-    clearError('score-error');
-    hideInfo('score-info');
-    updateTextCharStatus();
-    updateOcrCharStatus();
-    showSection(2);
-  }
-
-  async function extractTextFromImage() {
-    const imgFile = selectedImageFile || document.getElementById('answer-img').files[0];
-    if (!imgFile) {
-      showError('score-error', '先に画像をアップロードしてください。');
-      return;
+    function populateThemes() {
+      const themeEl = document.getElementById('theme');
+      themeEl.innerHTML = '<option value="">── テーマを選択 ──</option>' +
+        THEMES.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
     }
 
-    clearError('score-error');
-    hideInfo('score-info');
-    setLoading('score', true);
-    document.getElementById('ocr-btn').disabled = true;
-
-    const prompt = `あなたは手書き答案の文字起こし担当です。画像内の日本語答案をできるだけ正確にテキスト化してください。
-出力はJSONのみです。
-
-【条件】
-- 採点はまだしない。
-- 画像中の答案だけを文字起こしする。
-- 読めない文字は「□」で残す。
-- 改行は適度に整えるが、意味を変えない。
-- 余計な説明は書かない。
-
-【出力JSON】
-{
-  "recognized_text":"ここに文字起こし結果"
-}`;
-
-    try {
-      const b64 = await fileToBase64(imgFile);
-      const resText = await callAPIWithImage(prompt, b64, imgFile.type);
-      const json = extractJSON(resText);
-      const recognized = String(json.recognized_text || '').trim();
-
-      if (!recognized) {
-        throw new Error('文字起こし結果が空でした。');
-      }
-
-      document.getElementById('ocr-text').value = recognized;
-      updateOcrCharStatus();
-      showInfo('score-info', '画像から文字を読み取りました。内容を確認・修正してから採点してください。');
-    } catch (e) {
-      showError('score-error', '画像の文字起こしに失敗しました。\n' + e.message);
-    } finally {
-      setLoading('score', false);
-      document.getElementById('ocr-btn').disabled = false;
-    }
-  }
-
-  async function scoreAnswer() {
-    if (!currentQuestion || !currentQuestion.passage || !currentQuestion.summary_task) {
-      showError('score-error', '問題データがありません。問題生成からやり直してください。');
-      return;
+    function setupDifficultyButtons() {
+      document.querySelectorAll('.diff-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedDiff = btn.dataset.level;
+        });
+      });
     }
 
-    const rubricText = document.getElementById('rubric').value.trim();
-    let answerContent = '';
-
-    if (currentTab === 'text') {
-      answerContent = document.getElementById('answer-text').value.trim();
-      if (!answerContent) {
-        showError('score-error', '要約を入力してください。');
-        return;
-      }
-    } else {
-      answerContent = document.getElementById('ocr-text').value.trim();
-      if (!answerContent) {
-        showError('score-error', '先に画像から文字を読み取るか、読み取り結果欄に答案を入力してください。');
-        return;
-      }
+    function setupCharCounters() {
+      document.getElementById('answer-text').addEventListener('input', updateTextCharStatus);
+      document.getElementById('ocr-text').addEventListener('input', updateOcrCharStatus);
     }
 
-    clearError('score-error');
-    hideInfo('score-info');
-    setLoading('score', true);
-    document.getElementById('score-btn').disabled = true;
-
-    const answerLen = countCharsJP(answerContent);
-    const lengthStatus = {
-      ok: answerLen <= currentQuestion.max_chars,
-      len: answerLen,
-      max: currentQuestion.max_chars
-    };
-
-    const prompt = `あなたは国語の要約問題の採点専門家です。以下の本文・設問・生徒答案を読み、要約として採点してください。出力はJSONのみです。
-
-【本文】
-${currentQuestion.passage}
-
-【要約問題】
-${currentQuestion.summary_task}
-
-【本文全体の中心主張】
-${currentQuestion.main_point}
-
-【要約で最低限必要な要点】
-${(currentQuestion.required_points || []).map((p, i) => `${i + 1}. ${p}`).join('\n')}
-
-【模範要約】
-${currentQuestion.model_summary}
-
-【生徒答案の字数】
-- 上限字数: ${currentQuestion.max_chars}
-- 生徒答案字数: ${answerLen}
-- 字数条件判定: ${lengthStatus.ok ? '適合' : '不適合'}
-
-${rubricText ? '【追加採点基準】\n' + rubricText + '\n' : ''}
-
-【生徒答案】
-${answerContent}
-
-【採点方針】
-- 模範要約との表現一致ではなく、本文理解と要約の適切さを評価すること。
-- 本文全体の中心内容をつかめているかを重視する。
-- required_points をいくつ押さえているかを評価する。
-- 具体例の羅列ではなく、本文の要旨としてまとめているかを評価する。
-- 具体例だけを拾って中心主張が弱い場合は減点する。
-- 感想や自分の意見を書いている場合は減点する。
-- 日本語として簡潔で自然かを見る。
-- 字数条件に不適合なら、その事実を improve_point と comment に明記する。
-- improve_point は1つだけにする。
-- good_points は1〜2個までにする。
-- model_answer_hint は入力の模範要約をそのまま返す。
-- 採点では必ず「具体例に寄りすぎず、本文の要旨をまとめているか」を見る。
-
-【出力JSON】
-{
-  "score": 0,
-  "grade": "A",
-  "comment": "総合コメント",
-  "good_points": ["よかった点1","よかった点2"],
-  "improve_point": "改善点1つだけ",
-  "model_answer_hint": "${escapeForJson(currentQuestion.model_summary)}",
-  "char_count": ${answerLen},
-  "char_ok": ${lengthStatus.ok ? 'true' : 'false'}
-}
-
-採点基準：S(90-100点)、A(80-89点)、B(70-79点)、C(60-69点)、D(59点以下)`;
-
-    try {
-      const resText = await callAPI(prompt);
-      const json = extractJSON(resText);
-      json.char_count = Number.isFinite(Number(json.char_count)) ? Number(json.char_count) : answerLen;
-      json.char_ok = typeof json.char_ok === 'boolean' ? json.char_ok : lengthStatus.ok;
-      renderResult(json);
-      showSection(3);
-    } catch (e) {
-      showError('score-error', '採点に失敗しました。もう一度お試しください。\n' + e.message);
-    } finally {
-      setLoading('score', false);
-      document.getElementById('score-btn').disabled = false;
-    }
-  }
-
-  function renderResult(json) {
-    const score = Number.isFinite(Number(json.score)) ? Math.max(0, Math.min(100, Number(json.score))) : 0;
-    const grade = json.grade || scoreToGrade(score);
-
-    document.getElementById('res-score').textContent = score;
-    const gradeEl = document.getElementById('res-grade');
-    gradeEl.textContent = grade;
-    gradeEl.className = 'grade-badge grade-' + grade;
-
-    document.getElementById('res-comment').textContent = json.comment || '';
-
-    const goodPointsRaw = Array.isArray(json.good_points) ? json.good_points : [];
-    const goodPoints = goodPointsRaw.slice(0, 2);
-    const improvePoint = String(json.improve_point || '').trim();
-
-    document.getElementById('res-good').innerHTML = goodPoints.map(p =>
-      `<li class="good"><span class="icon">✓</span>${escapeHtml(p)}</li>`
-    ).join('');
-
-    document.getElementById('res-bad').innerHTML = improvePoint
-      ? `<li class="bad"><span class="icon">△</span>${escapeHtml(improvePoint)}</li>`
-      : '';
-
-    document.getElementById('res-model').textContent = json.model_answer_hint || currentQuestion.model_summary || '';
-
-    const charCount = Number.isFinite(Number(json.char_count)) ? Number(json.char_count) : 0;
-    const charOk = !!json.char_ok;
-    const resCharBox = document.getElementById('res-char-box');
-    resCharBox.className = 'char-box ' + (charOk ? 'char-ok' : 'char-ng');
-    resCharBox.textContent = `答案字数：${charCount}字 / 条件 ${currentQuestion.max_chars}字以内`;
-  }
-
-  function scoreToGrade(s) {
-    if (s >= 90) return 'S';
-    if (s >= 80) return 'A';
-    if (s >= 70) return 'B';
-    if (s >= 60) return 'C';
-    return 'D';
-  }
-
-  async function callAPI(prompt) {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1800,
-        messages: [{
-          role: 'user',
-          content: prompt
-        }]
-      })
-    });
-
-    const rawText = await res.text();
-
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch (e) {
-      throw new Error('APIがJSONを返していません: ' + rawText.slice(0, 300));
+    function setupUploadEvents() {
+      const uploadArea = document.getElementById('upload-area');
+      ['dragover', 'dragleave', 'drop'].forEach(type => {
+        uploadArea.addEventListener(type, ev => {
+          ev.preventDefault();
+          if (type === 'dragover') uploadArea.classList.add('dragover');
+          if (type === 'dragleave' || type === 'drop') uploadArea.classList.remove('dragover');
+          if (type === 'drop' && ev.dataTransfer?.files?.[0]) {
+            selectedImageFile = ev.dataTransfer.files[0];
+            loadImageFile(selectedImageFile);
+          }
+        });
+      });
     }
 
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: ` + rawText.slice(0, 300));
-    }
-
-    const text =
-      data?.content?.[0]?.text ??
-      data?.completion ??
-      data?.text ??
-      data?.result ??
-      '';
-
-    if (!text) {
-      throw new Error('APIレスポンスに本文がありません: ' + JSON.stringify(data).slice(0, 500));
-    }
-
-    return text;
-  }
-
-  async function callAPIWithImage(prompt, base64, mediaType) {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1800,
-        messages: [{
-          role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: {
-                type: 'base64',
-                media_type: mediaType,
-                data: base64
-              }
-            },
-            {
-              type: 'text',
-              text: prompt
-            }
-          ]
-        }]
-      })
-    });
-
-    const rawText = await res.text();
-
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch (e) {
-      throw new Error('APIがJSONを返していません: ' + rawText.slice(0, 300));
-    }
-
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: ` + rawText.slice(0, 300));
-    }
-
-    const text =
-      data?.content?.[0]?.text ??
-      data?.completion ??
-      data?.text ??
-      data?.result ??
-      '';
-
-    if (!text) {
-      throw new Error('APIレスポンスに本文がありません: ' + JSON.stringify(data).slice(0, 500));
-    }
-
-    return text;
-  }
-
-  function extractJSON(text) {
-    if (typeof text !== 'string' || !text.trim()) {
-      throw new Error('APIから空の応答が返されました。');
-    }
-
-    const fencedMatch = text.match(/```json\s*([\s\S]*?)```/i);
-    if (fencedMatch) {
+    async function restoreSession() {
       try {
-        return JSON.parse(fencedMatch[1]);
-      } catch (e) {}
-    }
-
-    const match = text.match(/\{[\s\S]*\}/);
-    if (!match) {
-      throw new Error('JSONが取得できませんでした。応答冒頭: ' + text.slice(0, 200));
-    }
-
-    try {
-      return JSON.parse(match[0]);
-    } catch (e) {
-      throw new Error('JSON解析失敗: ' + e.message + '\n応答冒頭: ' + match[0].slice(0, 200));
-    }
-  }
-
-  function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const result = e.target && e.target.result ? String(e.target.result) : '';
-        const commaIndex = result.indexOf(',');
-        if (commaIndex === -1) {
-          reject(new Error('画像データの読み取りに失敗しました。'));
+        const me = await api('/api/me');
+        if (me?.authenticated) {
+          currentUser = me.user;
+          openApp(me.user);
           return;
         }
-        resolve(result.slice(commaIndex + 1));
-      };
-      reader.onerror = () => reject(new Error('画像の読み込みに失敗しました。'));
-      reader.readAsDataURL(file);
-    });
-  }
+      } catch (e) {}
+      openPublic();
+    }
 
-  function previewImage(e) {
-    const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
-    if (file) {
+    function openPublic() {
+      document.getElementById('public-view').classList.remove('hidden');
+      document.getElementById('app-view').classList.add('hidden');
+    }
+
+    function openApp(user) {
+      document.getElementById('public-view').classList.add('hidden');
+      document.getElementById('app-view').classList.remove('hidden');
+      currentUser = user;
+      renderSchoolHeader(user);
+      resetAppFlow(false);
+      refreshHistory();
+    }
+
+    function renderSchoolHeader(user) {
+      document.getElementById('school-name').textContent = user.school_name || '塾名未設定';
+      document.getElementById('plan-label').textContent = planLabel(user.plan_type);
+      document.getElementById('remaining-label').textContent = `${Number(user.remaining_count ?? 0)}回`;
+      document.getElementById('end-date-label').textContent = user.contract_end_date || '-';
+      document.getElementById('school-sub').textContent = user.contract_expired ? '契約終了：履歴閲覧のみ可能' : '要約生成・採点システム';
+
+      const img = document.getElementById('school-logo');
+      const fallback = document.getElementById('school-logo-fallback');
+      if (user.logo_url) {
+        img.src = user.logo_url;
+        img.classList.remove('hidden');
+        fallback.classList.add('hidden');
+      } else {
+        img.classList.add('hidden');
+        fallback.classList.remove('hidden');
+        fallback.textContent = getSchoolInitial(user.school_name || '塾');
+      }
+    }
+
+    function planLabel(plan) {
+      const map = {
+        trial: '体験版',
+        paid_200: '200回プラン',
+        paid_500: '500回プラン',
+        paid_1000: '1000回プラン',
+        ambassador: '塾長アンバサダープラン'
+      };
+      return map[plan] || plan || '-';
+    }
+
+    function getSchoolInitial(name) {
+      return String(name || '塾').trim().slice(0, 1) || '塾';
+    }
+
+    function setStep(active) {
+      for (let i = 1; i <= 3; i++) {
+        const el = document.getElementById('step' + i);
+        el.classList.remove('active', 'done');
+        if (i < active) el.classList.add('done');
+        if (i === active) el.classList.add('active');
+      }
+    }
+
+    function showSection(n) {
+      for (const secId of ['sec1', 'sec2', 'sec3']) {
+        document.getElementById(secId).classList.add('hidden');
+      }
+      document.getElementById('sec' + n).classList.remove('hidden');
+      setStep(n);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchTab(ev, tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      ev.currentTarget.classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+      clearMessage('score-error');
+      clearMessage('score-info');
+    }
+
+    function scrollToPricing() {
+      document.getElementById('pricing-block').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function showTrialModal() {
+      document.getElementById('trial-modal').classList.remove('hidden');
+      clearMessage('trial-error');
+      clearMessage('trial-info');
+    }
+
+    function hideTrialModal() {
+      document.getElementById('trial-modal').classList.add('hidden');
+    }
+
+    async function submitTrialRequest() {
+      const payload = {
+        school_name: document.getElementById('trial-school-name').value.trim(),
+        contact_name: document.getElementById('trial-contact-name').value.trim(),
+        email: document.getElementById('trial-email').value.trim(),
+        phone: document.getElementById('trial-phone').value.trim()
+      };
+
+      if (!payload.school_name || !payload.contact_name || !payload.email || !payload.phone) {
+        showMessage('trial-error', '4項目をすべて入力してください。', true);
+        return;
+      }
+
+      try {
+        await api('/api/trial/apply', { method: 'POST', body: payload });
+        showMessage('trial-info', '体験版申し込みを受け付けました。確認後、IDとパスワードをお送りします。');
+      } catch (e) {
+        showMessage('trial-error', e.message, true);
+      }
+    }
+
+    async function login() {
+      clearMessage('login-error');
+      clearMessage('login-info');
+      const loginId = document.getElementById('login-id').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+      if (!loginId || !password) {
+        showMessage('login-error', 'IDとパスワードを入力してください。', true);
+        return;
+      }
+      document.getElementById('login-btn').disabled = true;
+      try {
+        const res = await api('/api/auth/login', { method: 'POST', body: { login_id: loginId, password } });
+        showMessage('login-info', 'ログインしました。');
+        openApp(res.user);
+      } catch (e) {
+        showMessage('login-error', e.message, true);
+      } finally {
+        document.getElementById('login-btn').disabled = false;
+      }
+    }
+
+    async function logout() {
+      try { await api('/api/auth/logout', { method: 'POST' }); } catch (e) {}
+      currentUser = null;
+      openPublic();
+    }
+
+    function getLengthSpec(level) {
+      switch (level) {
+        case '小6・中1':
+          return {
+            passage: '本文は400～500字程度。',
+            levelSpec: '難易度は小6・中1レベル。語彙は小学生高学年～中1が読める範囲を中心にし、主張は明確、具体例をやや多めにする。'
+          };
+        case '高校入試':
+          return {
+            passage: '本文は600～700字程度。',
+            levelSpec: '難易度は高校入試レベル。中学生が読める語彙を中心に、主張と理由、具体例と一般論のつながりが追いやすい文章にする。'
+          };
+        default:
+          return {
+            passage: '本文は700～800字程度、800字以内厳守。',
+            levelSpec: '難易度は大学入試レベル。抽象度を上げ、対比・反論処理・暗黙の前提を含み、本文全体を踏まえないと主張が取りにくい構成にする。'
+          };
+      }
+    }
+
+    function decideMaxCharsByLevel(level) {
+      if (level === '小6・中1') return 30;
+      if (level === '高校入試') return 50;
+      return 70;
+    }
+
+    function getModelSummaryLimitText(level) {
+      if (level === '小6・中1') return 'model_summary は日本語30字程度、30字以内を目安に簡潔にまとめる。';
+      if (level === '高校入試') return 'model_summary は日本語50字程度、50字以内を目安に簡潔にまとめる。';
+      return 'model_summary は日本語70字以内でまとめる。';
+    }
+
+    async function generateQuestion() {
+      if (currentUser?.contract_expired) {
+        showMessage('gen-error', '契約期間が終了しているため、履歴閲覧のみ可能です。', true);
+        return;
+      }
+
+      const theme = document.getElementById('theme').value;
+      const extra = document.getElementById('extra').value.trim();
+      if (!theme) {
+        showMessage('gen-error', 'テーマを選択してください。', true);
+        return;
+      }
+
+      clearMessage('gen-error');
+      clearMessage('gen-info');
+      setLoading('gen', true);
+      document.getElementById('gen-btn').disabled = true;
+      document.getElementById('question-result').classList.add('hidden');
+
+      try {
+        let json = null;
+        let lastError = '';
+        const spec = getLengthSpec(selectedDiff);
+
+        for (let attempt = 1; attempt <= 5; attempt++) {
+          const prompt = buildGeneratePrompt(theme, selectedDiff, spec, extra, attempt);
+          const res = await api('/api/questions/generate', { method: 'POST', body: { prompt, theme, level: selectedDiff } });
+          const candidate = typeof res.generated === 'string' ? extractJSON(res.generated) : res.generated;
+          try {
+            json = normalizeGeneratedQuestion(candidate, selectedDiff);
+            validateGeneratedQuestion(json, selectedDiff);
+            break;
+          } catch (err) {
+            lastError = `生成${attempt}回目：${err.message}`;
+          }
+        }
+
+        if (!json) throw new Error(lastError || '問題生成後の検証に失敗しました。');
+
+        currentQuestion = json;
+        currentMeta = { theme, diff: selectedDiff };
+        currentUser.remaining_count = Number(resMaybeRemaining(json, currentUser.remaining_count));
+        renderUserStatus(currentUser);
+        renderQuestion('q-meta', 'q-text', 'summary-task-box', json, currentMeta);
+        document.getElementById('question-result').classList.remove('hidden');
+        showMessage('gen-info', '問題を生成しました。');
+      } catch (e) {
+        showMessage('gen-error', e.message, true);
+      } finally {
+        setLoading('gen', false);
+        document.getElementById('gen-btn').disabled = false;
+      }
+    }
+
+    function resMaybeRemaining(result, fallback) {
+      return result?.remaining_count ?? fallback;
+    }
+
+    function buildGeneratePrompt(theme, level, spec, extra, attempt = 1) {
+      const strictNote = attempt > 1 ? `\n- 前回は条件違反がありました。今回は特に model_summary の字数を厳守する。\n- 指定された字数上限を1字でも超えてはいけない。` : '';
+      return `あなたは国語の要約問題作成者です。次の条件で論説文1本と要約問題を作成し、出力はJSONのみとしてください。説明文、前置き、Markdownは禁止です。\n\n【条件】\n- テーマ：${theme}\n- 難易度：${level}\n- ${spec.passage}\n- 本文は4段落。\n- 各段落は1回ずつ改行で区切る。\n- 空行なし。\n- 各段落冒頭は全角スペース1字。\n- 段落途中では改行しない。\n- 文体は入試現代文の論説文。\n- 会話文は避ける。\n- 抽象論だけで終わらず、必要に応じて日常・学校・社会の具体例を0～2個入れる。\n- ${spec.levelSpec}\n- 4択問題は絶対に作らない。\n- model_summary は自然な日本語で書く。\n- model_summary には具体例・たとえ話・細かなエピソードを入れず、本文の要旨だけを書く。\n- ${getModelSummaryLimitText(level)}\n- summary_task には最初は具体的な字数を書かなくてよい。こちらで後から調整する。\n- main_point は本文全体の中心主張を一文で簡潔に書く。\n- required_points は要約で最低限触れてほしい要点を2～4個に絞る。\n- rubric には採点観点を3～5個入れる。\n- rubric には必ず「具体例に寄りすぎず、本文の要旨をまとめているか」を含める。\n- JSONの各キーは必ず埋める。${strictNote}\n${extra ? `\n【追加指示】\n- ${extra}` : ''}\n\n【JSONキー】\n{\n  "passage": "本文",\n  "summary_task": "次の文章を要約しなさい。",\n  "main_point": "本文全体の中心主張",\n  "required_points": ["要点1","要点2","要点3"],\n  "model_summary": "模範要約",\n  "rubric": ["観点1","観点2","観点3","観点4"]\n}`;
+    }
+
+    function normalizeGeneratedQuestion(json, level) {
+      const out = { ...json };
+      if (!Array.isArray(out.required_points)) out.required_points = [];
+      out.required_points = out.required_points.map(v => String(v || '').trim()).filter(Boolean).slice(0, 4);
+      if (!Array.isArray(out.rubric)) out.rubric = [];
+      out.rubric = out.rubric.map(v => String(v || '').trim()).filter(Boolean).slice(0, 5);
+      if (!out.rubric.some(v => v.includes('具体例') || v.includes('要旨'))) {
+        out.rubric.push('具体例に寄りすぎず、本文の要旨をまとめているか');
+      }
+      out.passage = normalizeTextBlock(out.passage);
+      out.summary_task = `次の文章を${decideMaxCharsByLevel(level)}字以内で要約しなさい。`;
+      out.model_summary = normalizeInlineText(out.model_summary);
+      out.main_point = normalizeInlineText(out.main_point);
+      out.model_chars = countCharsJP(out.model_summary);
+      out.max_chars = decideMaxCharsByLevel(level);
+      return out;
+    }
+
+    function validateGeneratedQuestion(json, level) {
+      if (!json.passage || !json.summary_task || !json.model_summary || !json.main_point) {
+        throw new Error('問題データが不足しています。');
+      }
+      if (!json.required_points || json.required_points.length < 2) {
+        throw new Error('required_points が不足しています。');
+      }
+      const modelLen = countCharsJP(json.model_summary);
+      const max = decideMaxCharsByLevel(level);
+      if (modelLen > max) throw new Error(`模範要約が長すぎます（${modelLen}字）。${max}字以内にしてください。`);
+      if (containsExampleLikeContent(json.model_summary)) throw new Error('模範要約に具体例らしき表現が含まれています。');
+      if (countParagraphs(json.passage) !== 4) throw new Error('本文が4段落になっていません。');
+    }
+
+    function renderQuestion(metaId, textId, taskId, json, meta) {
+      document.getElementById(metaId).innerHTML = `<span class="tag tag-theme">${escapeHtml(meta.theme)}</span><span class="tag tag-diff">${escapeHtml(meta.diff)}</span>`;
+      document.getElementById(textId).textContent = json.passage;
+      document.getElementById(taskId).textContent = '【要約】\n' + json.summary_task;
+    }
+
+    function goToAnswer() {
+      if (!currentQuestion?.passage) {
+        showMessage('gen-error', '先に問題を生成してください。', true);
+        return;
+      }
+      renderQuestion('q-meta2', 'q-text2', 'summary-task-box2', currentQuestion, currentMeta);
+      updateTextCharStatus();
+      updateOcrCharStatus();
+      showSection(2);
+    }
+
+    function backToGen() { showSection(1); }
+    function backToAnswer() { showSection(2); }
+
+    async function scoreAnswer() {
+      if (currentUser?.contract_expired) {
+        showMessage('score-error', '契約期間が終了しているため、履歴閲覧のみ可能です。', true);
+        return;
+      }
+      if (!currentQuestion?.passage) {
+        showMessage('score-error', '問題データがありません。', true);
+        return;
+      }
+
+      let answerContent = '';
+      if (currentTab === 'text') {
+        answerContent = document.getElementById('answer-text').value.trim();
+      } else {
+        answerContent = document.getElementById('ocr-text').value.trim();
+      }
+      if (!answerContent) {
+        showMessage('score-error', '要約を入力してください。', true);
+        return;
+      }
+
+      const studentName = document.getElementById('student-name').value.trim() || '名無し';
+      const rubricText = document.getElementById('rubric').value.trim();
+      const answerLen = countCharsJP(answerContent);
+      const charOk = answerLen <= currentQuestion.max_chars;
+
+      const prompt = `あなたは国語の要約問題の採点専門家です。以下の本文・設問・生徒答案を読み、要約として採点してください。出力はJSONのみです。\n\n【本文】\n${currentQuestion.passage}\n\n【要約問題】\n${currentQuestion.summary_task}\n\n【本文全体の中心主張】\n${currentQuestion.main_point}\n\n【要約で最低限必要な要点】\n${(currentQuestion.required_points || []).map((p, i) => `${i + 1}. ${p}`).join('\n')}\n\n【模範要約】\n${currentQuestion.model_summary}\n\n【生徒答案の字数】\n- 上限字数 ${currentQuestion.max_chars}\n- 生徒答案字数 ${answerLen}\n- 字数条件判定 ${charOk ? '適合' : '不適合'}\n${rubricText ? `\n【追加採点基準】\n${rubricText}\n` : ''}\n【生徒答案】\n${answerContent}\n\n【採点方針】\n- 模範要約との表現一致ではなく、本文理解と要約の適切さを評価すること。\n- 本文全体の中心内容をつかめているかを重視する。\n- required_points をいくつ押さえているかを評価する。\n- 具体例の羅列ではなく、本文の要旨としてまとめているかを評価する。\n- 具体例だけを拾って中心主張が弱い場合は減点する。\n- 感想や自分の意見を書いている場合は減点する。\n- 日本語として簡潔で自然かを見る。\n- 字数条件に不適合なら、その事実を improve_point と comment に明記する。\n- improve_point は1つだけにする。\n- good_points は1〜2個までにする。\n- model_answer_hint は入力の模範要約をそのまま返す。\n- 採点では必ず「具体例に寄りすぎず、本文の要旨をまとめているか」を見る。\n\n【出力JSON】\n{\n  "score": 0,\n  "grade": "A",\n  "comment": "総合コメント",\n  "good_points": ["よかった点1","よかった点2"],\n  "improve_point": "改善点1つだけ",\n  "model_answer_hint": ${JSON.stringify(currentQuestion.model_summary)},\n  "char_count": ${answerLen},\n  "char_ok": ${charOk ? 'true' : 'false'}\n}\n\n採点基準：S(90-100点)、A(80-89点)、B(70-79点)、C(60-69点)、D(59点以下)`;
+
+      clearMessage('score-error');
+      clearMessage('score-info');
+      setLoading('score', true);
+      document.getElementById('score-btn').disabled = true;
+
+      try {
+        const res = await api('/api/score', {
+          method: 'POST',
+          body: {
+            prompt,
+            theme: currentMeta.theme,
+            level: currentMeta.diff,
+            question: currentQuestion.passage,
+            summary_task: currentQuestion.summary_task,
+            summary: answerContent,
+            student_name: studentName,
+            rubric: rubricText
+          }
+        });
+        const json = typeof res.result === 'string' ? extractJSON(res.result) : res.result;
+        json.char_count = Number.isFinite(Number(json.char_count)) ? Number(json.char_count) : answerLen;
+        json.char_ok = typeof json.char_ok === 'boolean' ? json.char_ok : charOk;
+        renderResult(json);
+        if (typeof res.remaining_count === 'number') {
+          currentUser.remaining_count = res.remaining_count;
+          renderUserStatus(currentUser);
+        }
+        await refreshHistory();
+        showSection(3);
+      } catch (e) {
+        showMessage('score-error', e.message, true);
+      } finally {
+        setLoading('score', false);
+        document.getElementById('score-btn').disabled = false;
+      }
+    }
+
+    function renderUserStatus(user) {
+      document.getElementById('plan-label').textContent = planLabel(user.plan_type);
+      document.getElementById('remaining-label').textContent = `${Number(user.remaining_count ?? 0)}回`;
+      document.getElementById('end-date-label').textContent = user.contract_end_date || '-';
+    }
+
+    function renderResult(json) {
+      const score = Number.isFinite(Number(json.score)) ? Math.max(0, Math.min(100, Number(json.score))) : 0;
+      const grade = json.grade || scoreToGrade(score);
+      document.getElementById('res-score').textContent = score;
+      const gradeEl = document.getElementById('res-grade');
+      gradeEl.textContent = grade;
+      gradeEl.className = 'grade-badge grade-' + grade;
+      document.getElementById('res-comment').textContent = json.comment || '';
+      const goodPoints = Array.isArray(json.good_points) ? json.good_points.slice(0, 2) : [];
+      const improvePoint = String(json.improve_point || '').trim();
+      document.getElementById('res-good').innerHTML = goodPoints.map(p => `<li class="good"><strong>✓</strong><span>${escapeHtml(p)}</span></li>`).join('');
+      document.getElementById('res-bad').innerHTML = improvePoint ? `<li class="bad"><strong>△</strong><span>${escapeHtml(improvePoint)}</span></li>` : '';
+      document.getElementById('res-model').textContent = json.model_answer_hint || currentQuestion.model_summary || '';
+      const charCount = Number.isFinite(Number(json.char_count)) ? Number(json.char_count) : 0;
+      const charOk = !!json.char_ok;
+      const box = document.getElementById('res-char-box');
+      box.className = 'char-box ' + (charOk ? 'char-ok' : 'char-ng');
+      box.textContent = `答案字数：${charCount}字 / 条件 ${currentQuestion.max_chars}字以内`;
+    }
+
+    function scoreAnotherStudent() {
+      document.getElementById('student-name').value = '';
+      document.getElementById('answer-text').value = '';
+      document.getElementById('ocr-text').value = '';
+      document.getElementById('answer-img').value = '';
+      document.getElementById('preview-img').style.display = 'none';
+      document.getElementById('preview-img').src = '';
+      selectedImageFile = null;
+      currentTab = 'text';
+      document.querySelectorAll('.tab').forEach((tab, idx) => tab.classList.toggle('active', idx === 0));
+      document.querySelectorAll('.tab-panel').forEach((panel, idx) => panel.classList.toggle('active', idx === 0));
+      updateTextCharStatus();
+      updateOcrCharStatus();
+      showSection(2);
+    }
+
+    function restart() {
+      resetAppFlow(true);
+      showSection(1);
+    }
+
+    function resetAppFlow(clearQuestion = true) {
+      if (clearQuestion) {
+        currentQuestion = {};
+        currentMeta = {};
+        document.getElementById('question-result').classList.add('hidden');
+      }
+      document.getElementById('student-name').value = '';
+      document.getElementById('answer-text').value = '';
+      document.getElementById('ocr-text').value = '';
+      document.getElementById('answer-img').value = '';
+      document.getElementById('preview-img').src = '';
+      document.getElementById('preview-img').style.display = 'none';
+      document.getElementById('rubric').value = '';
+      selectedImageFile = null;
+      currentTab = 'text';
+      document.querySelectorAll('.tab').forEach((tab, idx) => tab.classList.toggle('active', idx === 0));
+      document.querySelectorAll('.tab-panel').forEach((panel, idx) => panel.classList.toggle('active', idx === 0));
+      clearMessage('gen-error'); clearMessage('gen-info'); clearMessage('score-error'); clearMessage('score-info');
+      updateTextCharStatus(); updateOcrCharStatus();
+      showSection(1);
+    }
+
+    async function extractTextFromImage() {
+      const imgFile = selectedImageFile || document.getElementById('answer-img').files?.[0];
+      if (!imgFile) {
+        showMessage('score-error', '先に画像をアップロードしてください。', true);
+        return;
+      }
+      clearMessage('score-error');
+      setLoading('score', true);
+      document.getElementById('ocr-btn').disabled = true;
+      try {
+        const base64 = await fileToBase64(imgFile);
+        const res = await api('/api/ocr', { method: 'POST', body: { image_base64: base64, media_type: imgFile.type } });
+        const recognized = String(res.recognized_text || '').trim();
+        if (!recognized) throw new Error('文字起こし結果が空でした。');
+        document.getElementById('ocr-text').value = recognized;
+        updateOcrCharStatus();
+        showMessage('score-info', '画像から文字を読み取りました。内容を確認・修正してから採点してください。');
+      } catch (e) {
+        showMessage('score-error', e.message, true);
+      } finally {
+        setLoading('score', false);
+        document.getElementById('ocr-btn').disabled = false;
+      }
+    }
+
+    async function refreshHistory() {
+      if (!currentUser) return;
+      try {
+        const res = await api('/api/history');
+        const rows = Array.isArray(res.items) ? res.items : [];
+        renderHistory(rows);
+        if (res.user) {
+          currentUser = res.user;
+          renderUserStatus(currentUser);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function renderHistory(rows) {
+      const tbody = document.getElementById('history-body');
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="5">履歴はまだありません。</td></tr>';
+        document.getElementById('history-panel').classList.add('hidden');
+        return;
+      }
+      tbody.innerHTML = rows.map((row, idx) => `
+        <tr class="history-row">
+          <td>${escapeHtml(row.created_at || '')}</td>
+          <td>${escapeHtml(row.student_name || '名無し')}</td>
+          <td>${escapeHtml(row.theme || '')}</td>
+          <td>${escapeHtml(String(row.score ?? ''))}</td>
+          <td><button class="btn btn-outline" type="button" onclick='showHistoryDetail(${JSON.stringify(JSON.stringify(row))})'>詳細</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function showHistoryDetail(raw) {
+      const row = JSON.parse(raw);
+      const panel = document.getElementById('history-panel');
+      const detail = document.getElementById('history-detail');
+      detail.textContent =
+`日時：${row.created_at || ''}
+テーマ：${row.theme || ''}
+生徒名：${row.student_name || '名無し'}
+得点：${row.score ?? ''}
+
+【問題】
+${row.question || ''}
+
+【要約】
+${row.summary || ''}
+
+【AIコメント】
+${row.ai_comment || ''}`;
+      panel.classList.remove('hidden');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function scoreToGrade(score) {
+      if (score >= 90) return 'S';
+      if (score >= 80) return 'A';
+      if (score >= 70) return 'B';
+      if (score >= 60) return 'C';
+      return 'D';
+    }
+
+    function previewImage(e) {
+      const file = e.target.files?.[0] || null;
+      if (!file) return;
       selectedImageFile = file;
       loadImageFile(file);
       document.getElementById('ocr-text').value = '';
       updateOcrCharStatus();
-      hideInfo('score-info');
+      clearMessage('score-info');
     }
-  }
 
-  function loadImageFile(file) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = document.getElementById('preview-img');
-      img.src = e.target.result;
-      img.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function setLoading(key, show) {
-    document.getElementById(key + '-loading').classList.toggle('show', show);
-  }
-
-  function showError(id, msg) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.classList.add('show');
-  }
-
-  function clearError(id) {
-    const el = document.getElementById(id);
-    el.textContent = '';
-    el.classList.remove('show');
-  }
-
-  function showInfo(id, msg) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.classList.remove('hidden');
-  }
-
-  function hideInfo(id) {
-    const el = document.getElementById(id);
-    el.textContent = '';
-    el.classList.add('hidden');
-  }
-
-  function restart() {
-    document.getElementById('answer-text').value = '';
-    document.getElementById('answer-img').value = '';
-    document.getElementById('ocr-text').value = '';
-    document.getElementById('preview-img').style.display = 'none';
-    document.getElementById('preview-img').src = '';
-    document.getElementById('rubric').value = '';
-    document.getElementById('question-result').style.display = 'none';
-
-    currentQuestion = {};
-    currentMeta = {};
-    currentTab = 'text';
-    selectedImageFile = null;
-
-    document.querySelectorAll('.tab').forEach((tab, idx) => {
-      tab.classList.toggle('active', idx === 0);
-    });
-    document.querySelectorAll('.tab-panel').forEach((panel, idx) => {
-      panel.classList.toggle('active', idx === 0);
-    });
-
-    clearError('gen-error');
-    clearError('score-error');
-    hideInfo('gen-info');
-    hideInfo('score-info');
-
-    updateTextCharStatus();
-    updateOcrCharStatus();
-
-    showSection(1);
-  }
-
-  function printResult() {
-    window.print();
-  }
-
-  function escapeHtml(str) {
-    return String(str)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#39;');
-  }
-
-  function escapeForJson(str) {
-    return String(str)
-      .replaceAll('\\', '\\\\')
-      .replaceAll('"', '\\"')
-      .replaceAll('\n', '\\n');
-  }
-
-  function normalizeTextBlock(str) {
-    return String(str || '')
-      .replace(/\r\n/g, '\n')
-      .replace(/\n{3,}/g, '\n\n')
-      .trim();
-  }
-
-  function normalizeInlineText(str) {
-    return String(str || '')
-      .replace(/\s+/g, ' ')
-      .trim();
-  }
-
-  function countParagraphs(text) {
-    return normalizeTextBlock(text).split('\n').filter(Boolean).length;
-  }
-
-  function countCharsJP(text) {
-    return [...String(text || '').replace(/\s+/g, '')].length;
-  }
-
-  function parseLengthFromTask(task) {
-    const text = String(task || '');
-    const maxOnly = text.match(/(\d+)\s*字以内/);
-    if (maxOnly) {
-      return {
-        min: null,
-        max: Number(maxOnly[1])
+    function loadImageFile(file) {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = document.getElementById('preview-img');
+        img.src = ev.target.result;
+        img.style.display = 'block';
       };
+      reader.readAsDataURL(file);
     }
-    return { min: null, max: null };
-  }
 
-  function containsExampleLikeContent(text) {
-    const t = String(text || '');
-    const patterns = [
-      '例えば', 'たとえば', '例として', '具体的には',
-      '学校で', '教室で', 'ある生徒', 'ある人', 'たとえばポケモン',
-      '通信ケーブル', 'スマホ', 'SNS', 'ゲームボーイ'
-    ];
-    return patterns.some(p => t.includes(p));
-  }
+    function updateTextCharStatus() {
+      const text = document.getElementById('answer-text').value.trim();
+      updateCharBox('text-char-status', text);
+    }
 
-  function updateTextCharStatus() {
-    const text = document.getElementById('answer-text').value.trim();
-    const len = countCharsJP(text);
-    const max = currentQuestion.max_chars ?? 9999;
-    const ok = !currentQuestion.max_chars ? true : (len <= max);
-    const el = document.getElementById('text-char-status');
-    el.className = 'char-box ' + (ok ? 'char-ok' : 'char-ng');
-    el.textContent = currentQuestion.max_chars
-      ? `文字数：${len}字 / 条件 ${max}字以内`
-      : `文字数：${len}字`;
-  }
+    function updateOcrCharStatus() {
+      const text = document.getElementById('ocr-text').value.trim();
+      updateCharBox('ocr-char-status', text);
+    }
 
-  function updateOcrCharStatus() {
-    const text = document.getElementById('ocr-text').value.trim();
-    const len = countCharsJP(text);
-    const max = currentQuestion.max_chars ?? 9999;
-    const ok = !currentQuestion.max_chars ? true : (len <= max);
-    const el = document.getElementById('ocr-char-status');
-    el.className = 'char-box ' + (ok ? 'char-ok' : 'char-ng');
-    el.textContent = currentQuestion.max_chars
-      ? `文字数：${len}字 / 条件 ${max}字以内`
-      : `文字数：${len}字`;
-  }
-</script>
+    function updateCharBox(id, text) {
+      const len = countCharsJP(text);
+      const max = currentQuestion.max_chars || null;
+      const ok = !max || len <= max;
+      const el = document.getElementById(id);
+      el.className = 'char-box ' + (ok ? 'char-ok' : 'char-ng');
+      el.textContent = max ? `文字数：${len}字 / 条件 ${max}字以内` : `文字数：${len}字`;
+    }
+
+    function setLoading(key, show) {
+      document.getElementById(`${key}-loading`).classList.toggle('show', show);
+    }
+
+    function showMessage(id, msg, isError = false) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.add('show');
+      if (isError) {
+        el.classList.remove('info-box');
+        el.classList.add('error-box');
+      } else {
+        el.classList.remove('error-box');
+        el.classList.add('info-box');
+      }
+    }
+
+    function clearMessage(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = '';
+      el.classList.remove('show');
+    }
+
+    async function api(path, options = {}) {
+      const init = { method: options.method || 'GET', credentials: 'include', headers: {} };
+      if (options.body !== undefined) {
+        init.headers['Content-Type'] = 'application/json';
+        init.body = JSON.stringify(options.body);
+      }
+      const res = await fetch(API_BASE + path, init);
+      const text = await res.text();
+      let data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch (e) { throw new Error(text || 'サーバー応答の解析に失敗しました。'); }
+      if (!res.ok) throw new Error(data.error || data.message || `HTTP ${res.status}`);
+      return data;
+    }
+
+    function extractJSON(text) {
+      if (typeof text !== 'string' || !text.trim()) throw new Error('空の応答です。');
+      const fenced = text.match(/```json\s*([\s\S]*?)```/i);
+      if (fenced) return JSON.parse(fenced[1]);
+      const match = text.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('JSONが取得できませんでした。');
+      return JSON.parse(match[0]);
+    }
+
+    function normalizeTextBlock(str) {
+      return String(str || '').replace(/\r\n?/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+    }
+
+    function normalizeInlineText(str) {
+      return String(str || '').replace(/\s+/g, ' ').trim();
+    }
+
+    function countParagraphs(text) {
+      return normalizeTextBlock(text).split('\n').filter(Boolean).length;
+    }
+
+    function countCharsJP(text) {
+      return [...String(text || '').replace(/\s+/g, '')].length;
+    }
+
+    function containsExampleLikeContent(text) {
+      const t = String(text || '');
+      const patterns = ['例えば','たとえば','例として','具体的には','学校で','教室で','ある生徒','ある人','たとえばポケモン','通信ケーブル','スマホ','SNS','ゲームボーイ'];
+      return patterns.some(p => t.includes(p));
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const result = String(e.target?.result || '');
+          const idx = result.indexOf(',');
+          if (idx === -1) return reject(new Error('画像データの読み取りに失敗しました。'));
+          resolve(result.slice(idx + 1));
+        };
+        reader.onerror = () => reject(new Error('画像の読み込みに失敗しました。'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+  </script>
 </body>
 </html>
+
